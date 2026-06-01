@@ -1,0 +1,25 @@
+{
+  "name": "@imora/db",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx src/seed.ts",
+    "db:generate": "prisma generate",
+    "postinstall": "prisma generate"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.9.0",
+    "cloudinary": "^2.6.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.9.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5"
+  }
+}

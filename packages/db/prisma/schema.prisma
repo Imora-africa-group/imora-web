@@ -1,0 +1,242 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+enum StandingType {
+  BASIQUE
+  MOYEN
+  HAUT_STANDING
+  LUXE
+}
+
+enum LeadStatus {
+  NOUVEAU
+  EN_COURS
+  TRAITE
+  ARCHIVE
+}
+
+enum ServiceType {
+  PARCELLE
+  CONSTRUCTION
+  LOCATIVE
+  SIMULATION
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  EDITEUR
+}
+
+// ── Settings (single row) ─────────────────────────────────────────────────────
+
+model Settings {
+  id                    String   @id @default("singleton")
+  whatsappNumber        String   @default("")
+  telegramChatId        String   @default("")
+  sloganText            String   @default("L'immobilier sécurisé, sans tracasserie") @db.Text
+  serviceParcelleDesc   String   @default("") @db.Text
+  serviceConstructDesc  String   @default("") @db.Text
+  serviceLocativeDesc   String   @default("") @db.Text
+  exchangeRateUSD       Float    @default(0.00165)
+  exchangeRateEUR       Float    @default(0.00152)
+  exchangeRateUpdatedAt DateTime @default(now())
+  fallbackRateUSD       Float    @default(0.00165)
+  fallbackRateEUR       Float    @default(0.00152)
+  facebookUrl           String   @default("")
+  instagramUrl          String   @default("")
+  linkedinUrl           String   @default("")
+  youtubeUrl            String   @default("")
+  mentionsLegales       String   @default("") @db.Text
+  updatedAt             DateTime @updatedAt
+}
+
+// ── StatOverride (single row) ─────────────────────────────────────────────────
+
+model StatOverride {
+  id                String @id @default("singleton")
+  projetsRealises   Int    @default(0)
+  clientsSatisfaits Int    @default(0)
+}
+
+// ── Admin Users ───────────────────────────────────────────────────────────────
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  nom          String
+  role         AdminRole @default(EDITEUR)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// ── Parcelles ─────────────────────────────────────────────────────────────────
+
+model Parcelle {
+  id                  String          @id @default(cuid())
+  titre               String
+  pays                String          @default("Bénin")
+  ville               String
+  arrondissement      String
+  quartier            String
+  prixFCFA            Int
+  superficie          Int
+  titreFoncier        Boolean         @default(false)
+  venteNotariee       Boolean         @default(false)
+  viabilisation       Boolean         @default(false)
+  distanceGoudron     Int?
+  distanceCentreVille Float?
+  tempsCotonou        Int?
+  description         String?         @db.Text
+  status              PublishStatus   @default(DRAFT)
+  images              ParcelleImage[]
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model ParcelleImage {
+  id                 String   @id @default(cuid())
+  parcelleId         String
+  parcelle           Parcelle @relation(fields: [parcelleId], references: [id], onDelete: Cascade)
+  cloudinaryPublicId String
+  ordre              Int      @default(0)
+  isMain             Boolean  @default(false)
+}
+
+// ── Construction ──────────────────────────────────────────────────────────────
+
+model ModeleConstruction {
+  id                 String        @id @default(cuid())
+  titre              String
+  standing           StandingType
+  prixFCFA           Int
+  superficie         Int
+  nbPieces           Int
+  niveaux            String        @default("R+0")
+  inclus             Json          @default("[]")
+  optionsNonIncluses Json          @default("[]")
+  composition        Json          @default("{}")
+  status             PublishStatus @default(DRAFT)
+  images             ModeleImage[]
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+}
+
+model ModeleImage {
+  id                 String             @id @default(cuid())
+  modeleId           String
+  modele             ModeleConstruction @relation(fields: [modeleId], references: [id], onDelete: Cascade)
+  cloudinaryPublicId String
+  ordre              Int                @default(0)
+  isMain             Boolean            @default(false)
+}
+
+// ── Réalisations ──────────────────────────────────────────────────────────────
+
+model Realisation {
+  id          String             @id @default(cuid())
+  titre       String
+  description String?            @db.Text
+  zone        String
+  standing    StandingType
+  annee       Int
+  status      PublishStatus      @default(DRAFT)
+  images      RealisationImage[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model RealisationImage {
+  id                 String      @id @default(cuid())
+  realisationId      String
+  realisation        Realisation @relation(fields: [realisationId], references: [id], onDelete: Cascade)
+  cloudinaryPublicId String
+  ordre              Int         @default(0)
+  isMain             Boolean     @default(false)
+}
+
+// ── Gestion Locative ──────────────────────────────────────────────────────────
+
+model Loyer {
+  id           String       @id @default(cuid())
+  zone         String
+  ville        String
+  standing     StandingType
+  modele       String?
+  nbPieces     Int
+  loyerMinFCFA Int
+  loyerMaxFCFA Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+// ── Partenaires ───────────────────────────────────────────────────────────────
+
+model Partenaire {
+  id                 String   @id @default(cuid())
+  nom                String
+  cloudinaryPublicId String
+  ordre              Int      @default(0)
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+// ── Avis Clients ──────────────────────────────────────────────────────────────
+
+model Avis {
+  id                 String   @id @default(cuid())
+  nomClient          String
+  cloudinaryPublicId String?
+  note               Int
+  texte              String   @db.Text
+  dateAvis           DateTime
+  isPublished        Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+// ── FAQ ───────────────────────────────────────────────────────────────────────
+
+model FAQ {
+  id          String   @id @default(cuid())
+  question    String
+  reponse     String   @db.Text
+  ordre       Int      @default(0)
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ── Leads ─────────────────────────────────────────────────────────────────────
+
+model Lead {
+  id             String      @id @default(cuid())
+  nom            String
+  prenom         String
+  telephone      String
+  indicatif      String      @default("+229")
+  email          String
+  pays           String
+  message        String?     @db.Text
+  serviceType    ServiceType
+  simulationData Json?
+  extras         Json?
+  statut         LeadStatus  @default(NOUVEAU)
+  notes          String?     @db.Text
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
