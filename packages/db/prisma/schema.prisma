@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ── Enums ─────────────────────────────────────────────────────────────────────
@@ -46,10 +47,10 @@ model Settings {
   id                    String   @id @default("singleton")
   whatsappNumber        String   @default("")
   telegramChatId        String   @default("")
-  sloganText            String   @default("L'immobilier sécurisé, sans tracasserie") @db.Text
-  serviceParcelleDesc   String   @default("") @db.Text
-  serviceConstructDesc  String   @default("") @db.Text
-  serviceLocativeDesc   String   @default("") @db.Text
+  sloganText            String   @default("L'immobilier sécurisé, sans tracasserie")
+  serviceParcelleDesc   String   @default("")
+  serviceConstructDesc  String   @default("")
+  serviceLocativeDesc   String   @default("")
   exchangeRateUSD       Float    @default(0.00165)
   exchangeRateEUR       Float    @default(0.00152)
   exchangeRateUpdatedAt DateTime @default(now())
@@ -59,7 +60,7 @@ model Settings {
   instagramUrl          String   @default("")
   linkedinUrl           String   @default("")
   youtubeUrl            String   @default("")
-  mentionsLegales       String   @default("") @db.Text
+  mentionsLegales       String   @default("")
   updatedAt             DateTime @updatedAt
 }
 
@@ -100,7 +101,7 @@ model Parcelle {
   distanceGoudron     Int?
   distanceCentreVille Float?
   tempsCotonou        Int?
-  description         String?         @db.Text
+  description         String?
   status              PublishStatus   @default(DRAFT)
   images              ParcelleImage[]
   createdAt           DateTime        @default(now())
@@ -149,7 +150,7 @@ model ModeleImage {
 model Realisation {
   id          String             @id @default(cuid())
   titre       String
-  description String?            @db.Text
+  description String?
   zone        String
   standing    StandingType
   annee       Int
@@ -202,7 +203,7 @@ model Avis {
   nomClient          String
   cloudinaryPublicId String?
   note               Int
-  texte              String   @db.Text
+  texte              String
   dateAvis           DateTime
   isPublished        Boolean  @default(false)
   createdAt          DateTime @default(now())
@@ -214,7 +215,7 @@ model Avis {
 model FAQ {
   id          String   @id @default(cuid())
   question    String
-  reponse     String   @db.Text
+  reponse     String
   ordre       Int      @default(0)
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -231,12 +232,12 @@ model Lead {
   indicatif      String      @default("+229")
   email          String
   pays           String
-  message        String?     @db.Text
+  message        String?
   serviceType    ServiceType
   simulationData Json?
   extras         Json?
   statut         LeadStatus  @default(NOUVEAU)
-  notes          String?     @db.Text
+  notes          String?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 }

@@ -1,2 +1,4 @@
-// Shared UI components — populated in Phase 2
-export {};
+export { PriceDisplay } from './components/PriceDisplay'
+export { StatusBadge } from './components/StatusBadge'
+export { WhatsAppButton } from './components/WhatsAppButton'
+export { cn } from './lib/utils'

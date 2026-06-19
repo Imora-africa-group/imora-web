@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio",
-    "db:seed": "tsx src/seed.ts",
-    "db:generate": "prisma generate",
+    "db:push": "dotenv -e ../../.env -- prisma db push",
+    "db:migrate": "dotenv -e ../../.env -- prisma migrate dev",
+    "db:studio": "dotenv -e ../../.env -- prisma studio",
+    "db:seed": "dotenv -e ../../.env -- tsx src/seed.ts",
+    "db:generate": "dotenv -e ../../.env -- prisma generate",
     "postinstall": "prisma generate"
   },
   "exports": {
@@ -15,9 +15,12 @@
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
+    "bcryptjs": "^2.4.3",
     "cloudinary": "^2.6.1"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "dotenv-cli": "^11.0.0",
     "prisma": "^6.9.0",
     "tsx": "^4.19.3",
     "typescript": "^5"

@@ -8,17 +8,63 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", "sans-serif"],
+        serif: ["var(--font-serif)", "serif"],
+      },
       colors: {
         gold: {
-          DEFAULT: "#B8860B",
-          light: "#DAA520",
-          dark: "#8B6914",
+          DEFAULT: "#C9A84C",
+          light: "#D4B870",
+          dark: "#A8872A",
         },
         navy: {
-          DEFAULT: "#1B2B4B",
-          light: "#2D4270",
-          dark: "#0F1A2E",
+          DEFAULT: "#0D2A4E",
+          light: "#1A3F6F",
+          dark: "#081B33",
         },
+        muted: {
+          DEFAULT: "#4A6080",
+          foreground: "#6B7FA0",
+        },
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        primary: {
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
+        },
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
+        destructive: {
+          DEFAULT: "var(--destructive)",
+        },
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+      },
+      animation: {
+        marquee: "marquee 30s linear infinite",
       },
     },
   },
