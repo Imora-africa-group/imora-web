@@ -23,16 +23,15 @@ export async function upsertLoyers(rows: z.infer<typeof batchSchema>) {
     await Promise.all(
       parsed.map((row) => {
         const { id, ...data } = row
-        if (id) {
-          return prisma.loyer.update({ where: { id }, data })
-        }
+        if (id) return prisma.loyer.update({ where: { id }, data })
         return prisma.loyer.create({ data })
       })
     )
     revalidatePath('/locative')
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur lors de la sauvegarde' }
+  } catch (error) {
+    console.error('[upsertLoyers]', error)
+    return { success: false, error: 'Erreur lors de l\'enregistrement des loyers' }
   }
 }
 
@@ -41,7 +40,8 @@ export async function deleteLoyer(id: string) {
     await prisma.loyer.delete({ where: { id } })
     revalidatePath('/locative')
     return { success: true }
-  } catch {
+  } catch (error) {
+    console.error('[deleteLoyer]', error)
     return { success: false, error: 'Erreur lors de la suppression' }
   }
 }

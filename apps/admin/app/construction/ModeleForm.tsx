@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -32,11 +33,12 @@ const STANDINGS = [
 
 interface ModeleFormProps {
   modele?: ModeleConstruction & { images: ModeleImage[] }
-  action: (formData: FormData) => Promise<void>
+  action: (formData: FormData) => Promise<{ success: boolean; error?: string }>
   actionLabel: string
 }
 
 export function ModeleForm({ modele, action, actionLabel }: ModeleFormProps) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [standing, setStanding] = useState<string>(modele?.standing ?? 'BASIQUE')
   const [inclus, setInclus] = useState<string[]>(
@@ -89,11 +91,12 @@ export function ModeleForm({ modele, action, actionLabel }: ModeleFormProps) {
       fd.set('mainImageIdx', String(mainNewIdx))
       newFiles.forEach((f) => fd.append(modele ? 'newImages' : 'images', f))
 
-      try {
-        await action(fd as unknown as FormData)
-        toast.success('Enregistré')
-      } catch {
-        toast.error('Erreur')
+      const res = await action(fd as unknown as FormData)
+      if (res.success) {
+        toast.success(status === 'PUBLISHED' ? 'Modèle publié avec succès' : 'Brouillon enregistré')
+        router.push('/construction')
+      } else {
+        toast.error(res.error ?? 'Erreur lors de l\'enregistrement')
       }
     })
   }

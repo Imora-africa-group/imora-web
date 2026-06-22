@@ -1,23 +1,30 @@
 'use client'
 
 import { useRef, useState, useTransition } from 'react'
+import { PaysSelector } from '@imora/ui'
 import { submitContactForm } from './actions'
 
 export function ContactForm() {
   const [isPending, startTransition] = useTransition()
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [pays, setPays] = useState('')
   const formRef = useRef<HTMLFormElement>(null)
 
   function handleSubmit(fd: FormData) {
     setError(null)
     startTransition(async () => {
-      const res = await submitContactForm(fd)
-      if (res.success) {
-        setSuccess(true)
-        formRef.current?.reset()
-      } else {
-        setError(res.error ?? 'Erreur inconnue')
+      try {
+        const res = await submitContactForm(fd)
+        if (res?.success) {
+          setSuccess(true)
+          formRef.current?.reset()
+          setPays('')
+        } else {
+          setError(res?.error ?? 'Erreur inconnue. Veuillez réessayer.')
+        }
+      } catch {
+        setError('Erreur de connexion. Veuillez réessayer.')
       }
     })
   }
@@ -63,6 +70,12 @@ export function ContactForm() {
         <label className="block text-sm font-medium text-gray-700 mb-1.5">Téléphone *</label>
         <input name="telephone" type="tel" required className={fieldClass} />
       </div>
+      <PaysSelector
+        value={pays}
+        onChange={setPays}
+        name="pays"
+        label="Pays de résidence"
+      />
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5">Sujet</label>
         <input name="sujet" className={fieldClass} />

@@ -3,7 +3,7 @@
 import { prisma, uploadImage, deleteImage } from '@imora/db'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
-import { redirect } from 'next/navigation'
+import { revalidateWebApp } from '@/lib/revalidate'
 
 const parcelleSchema = z.object({
   titre: z.string().min(1),
@@ -23,7 +23,7 @@ const parcelleSchema = z.object({
   status: z.enum(['DRAFT', 'PUBLISHED']).default('DRAFT'),
 })
 
-export async function createParcelle(formData: FormData) {
+export async function createParcelle(formData: FormData): Promise<{ success: boolean; error?: string }> {
   try {
     const raw = Object.fromEntries(formData.entries())
     const data = parcelleSchema.parse({
@@ -57,13 +57,17 @@ export async function createParcelle(formData: FormData) {
     }
 
     revalidatePath('/parcelles')
-  } catch {
-    return { success: false, error: 'Erreur lors de la création' }
+    revalidateWebApp(['/parcelles', '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
+    return { success: true }
+  } catch (error) {
+    console.error('[createParcelle]', error)
+    return { success: false, error: 'Erreur lors de la création de la parcelle' }
   }
-  redirect('/parcelles')
 }
 
-export async function updateParcelle(id: string, formData: FormData) {
+export async function updateParcelle(id: string, formData: FormData): Promise<{ success: boolean; error?: string }> {
   try {
     const raw = Object.fromEntries(formData.entries())
     const data = parcelleSchema.parse({
@@ -115,19 +119,27 @@ export async function updateParcelle(id: string, formData: FormData) {
 
     revalidatePath('/parcelles')
     revalidatePath(`/parcelles/${id}/edit`)
-  } catch {
-    return { success: false, error: 'Erreur lors de la mise à jour' }
+    revalidateWebApp(['/parcelles', `/parcelles/${id}`, '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
+    return { success: true }
+  } catch (error) {
+    console.error('[updateParcelle]', error)
+    return { success: false, error: 'Erreur lors de la mise à jour de la parcelle' }
   }
-  redirect('/parcelles')
 }
 
 export async function updateParcelleStatus(id: string, status: 'DRAFT' | 'PUBLISHED') {
   try {
     await prisma.parcelle.update({ where: { id }, data: { status } })
     revalidatePath('/parcelles')
+    revalidateWebApp(['/parcelles', `/parcelles/${id}`, '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[updateParcelleStatus]', error)
+    return { success: false, error: 'Erreur lors du changement de statut' }
   }
 }
 
@@ -137,8 +149,12 @@ export async function deleteParcelle(id: string) {
     await Promise.all(images.map((img) => deleteImage(img.cloudinaryPublicId)))
     await prisma.parcelle.delete({ where: { id } })
     revalidatePath('/parcelles')
+    revalidateWebApp(['/parcelles', '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
     return { success: true }
-  } catch {
+  } catch (error) {
+    console.error('[deleteParcelle]', error)
     return { success: false, error: 'Erreur lors de la suppression' }
   }
 }

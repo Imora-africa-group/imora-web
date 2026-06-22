@@ -1,3 +1,4 @@
+// ⚠️ DEV ONLY — ne jamais exécuter sur la DB prod
 import { hash } from "bcryptjs";
 import { prisma } from "./client";
 

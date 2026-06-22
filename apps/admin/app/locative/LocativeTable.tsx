@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Plus, Trash2, Save } from 'lucide-react'
 import type { Loyer } from '@imora/db'
+import { BENIN_VILLE_NOMS } from '@imora/types'
 
 type LoyerRow = Partial<Loyer> & {
   _tempId?: string
@@ -104,7 +105,14 @@ export function LocativeTable({ initialLoyers }: { initialLoyers: Loyer[] }) {
                     <Input value={row.zone} onChange={(e) => updateRow(idx, 'zone', e.target.value)} className="h-8 text-sm min-w-24" />
                   </td>
                   <td className="px-3 py-2">
-                    <Input value={row.ville} onChange={(e) => updateRow(idx, 'ville', e.target.value)} className="h-8 text-sm min-w-24" />
+                    <Select value={row.ville} onValueChange={(v) => { if (v) updateRow(idx, 'ville', v) }}>
+                      <SelectTrigger className="h-8 text-sm w-40">
+                        <SelectValue placeholder="Ville…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BENIN_VILLE_NOMS.map((v) => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
                   </td>
                   <td className="px-3 py-2">
                     <Select value={row.standing} onValueChange={(v) => { if (v) updateRow(idx, 'standing', v) }}>

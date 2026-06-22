@@ -2,8 +2,8 @@
 
 import { prisma, uploadImage, deleteImage } from '@imora/db'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { z } from 'zod'
+import { revalidateWebApp } from '@/lib/revalidate'
 
 const modeleSchema = z.object({
   titre: z.string().min(1),
@@ -18,7 +18,7 @@ const modeleSchema = z.object({
   status: z.enum(['DRAFT', 'PUBLISHED']).default('DRAFT'),
 })
 
-export async function createModele(formData: FormData) {
+export async function createModele(formData: FormData): Promise<{ success: boolean; error?: string }> {
   try {
     const raw = Object.fromEntries(formData.entries())
     const data = modeleSchema.parse(raw)
@@ -43,14 +43,19 @@ export async function createModele(formData: FormData) {
         data: { modeleId: modele.id, cloudinaryPublicId: publicId, ordre: i, isMain: i === mainIdx },
       })
     }
+
     revalidatePath('/construction')
-  } catch {
-    return { success: false, error: 'Erreur lors de la création' }
+    revalidateWebApp(['/construction', '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
+    return { success: true }
+  } catch (error) {
+    console.error('[createModele]', error)
+    return { success: false, error: 'Erreur lors de la création du modèle' }
   }
-  redirect('/construction')
 }
 
-export async function updateModele(id: string, formData: FormData) {
+export async function updateModele(id: string, formData: FormData): Promise<{ success: boolean; error?: string }> {
   try {
     const raw = Object.fromEntries(formData.entries())
     const data = modeleSchema.parse(raw)
@@ -91,19 +96,27 @@ export async function updateModele(id: string, formData: FormData) {
     }
 
     revalidatePath('/construction')
-  } catch {
-    return { success: false, error: 'Erreur lors de la mise à jour' }
+    revalidateWebApp(['/construction', '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
+    return { success: true }
+  } catch (error) {
+    console.error('[updateModele]', error)
+    return { success: false, error: 'Erreur lors de la mise à jour du modèle' }
   }
-  redirect('/construction')
 }
 
 export async function updateModeleStatus(id: string, status: 'DRAFT' | 'PUBLISHED') {
   try {
     await prisma.modeleConstruction.update({ where: { id }, data: { status } })
     revalidatePath('/construction')
+    revalidateWebApp(['/construction', '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[updateModeleStatus]', error)
+    return { success: false, error: 'Erreur lors du changement de statut' }
   }
 }
 
@@ -113,8 +126,12 @@ export async function deleteModele(id: string) {
     await Promise.all(images.map((img) => deleteImage(img.cloudinaryPublicId)))
     await prisma.modeleConstruction.delete({ where: { id } })
     revalidatePath('/construction')
+    revalidateWebApp(['/construction', '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
     return { success: true }
-  } catch {
+  } catch (error) {
+    console.error('[deleteModele]', error)
     return { success: false, error: 'Erreur lors de la suppression' }
   }
 }

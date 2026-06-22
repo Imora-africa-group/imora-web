@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
 import { prisma } from '@imora/db'
@@ -53,12 +54,18 @@ export default async function GestionLocativePage() {
   return (
     <>
       {/* Hero */}
-      <section style={{ backgroundColor: '#0D2A4E' }} className="py-16 px-4">
-        <div className="mx-auto max-w-7xl">
-          <h1 className="text-4xl md:text-5xl font-serif text-white">Gestion Locative</h1>
-          <p className="mt-3 text-white/70 text-lg">
-            Confiez-nous la gestion de votre bien immobilier. Percevez vos loyers chaque mois sans tracas.
-          </p>
+      <section className="relative overflow-hidden" style={{ minHeight: 260, backgroundColor: '#0D2A4E' }}>
+        <div className="absolute inset-0">
+          <Image src="/demo/apart-3.png" alt="" fill className="object-cover" priority />
+          <div className="absolute inset-0" style={{ background: 'rgba(13,42,78,0.82)' }} />
+        </div>
+        <div className="relative z-10 py-16 px-4">
+          <div className="mx-auto max-w-7xl">
+            <h1 className="text-4xl md:text-5xl font-serif text-white">Gestion Locative</h1>
+            <p className="mt-3 text-white/70 text-lg">
+              Confiez-nous la gestion de votre bien immobilier. Percevez vos loyers chaque mois sans tracas.
+            </p>
+          </div>
         </div>
       </section>
 

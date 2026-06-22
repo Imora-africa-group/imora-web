@@ -3,6 +3,7 @@
 import { prisma } from '@imora/db'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { revalidateWebApp } from '@/lib/revalidate'
 
 const whatsappSchema = z.object({ whatsappNumber: z.string() })
 const ratesSchema = z.object({
@@ -37,9 +38,11 @@ export async function saveWhatsapp(data: z.infer<typeof whatsappSchema>) {
     await getOrCreate()
     await prisma.settings.update({ where: { id: 'singleton' }, data: parsed })
     revalidatePath('/parametres')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[saveWhatsapp]', error)
+    return { success: false, error: 'Erreur lors de la sauvegarde du numéro WhatsApp' }
   }
 }
 
@@ -49,9 +52,13 @@ export async function saveRates(data: z.infer<typeof ratesSchema>) {
     await getOrCreate()
     await prisma.settings.update({ where: { id: 'singleton' }, data: parsed })
     revalidatePath('/parametres')
+    revalidateWebApp(['/', '/parcelles', '/construction']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[saveRates]', error)
+    return { success: false, error: 'Erreur lors de la sauvegarde des taux de change' }
   }
 }
 
@@ -61,9 +68,11 @@ export async function saveContenu(data: z.infer<typeof contenSchema>) {
     await getOrCreate()
     await prisma.settings.update({ where: { id: 'singleton' }, data: parsed })
     revalidatePath('/parametres')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[saveContenu]', error)
+    return { success: false, error: 'Erreur lors de la sauvegarde du contenu' }
   }
 }
 
@@ -73,9 +82,11 @@ export async function saveSocial(data: z.infer<typeof socialSchema>) {
     await getOrCreate()
     await prisma.settings.update({ where: { id: 'singleton' }, data: parsed })
     revalidatePath('/parametres')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[saveSocial]', error)
+    return { success: false, error: 'Erreur lors de la sauvegarde des liens sociaux' }
   }
 }
 
@@ -86,7 +97,8 @@ export async function saveMentions(data: z.infer<typeof mentionsSchema>) {
     await prisma.settings.update({ where: { id: 'singleton' }, data: parsed })
     revalidatePath('/parametres')
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[saveMentions]', error)
+    return { success: false, error: 'Erreur lors de la sauvegarde des mentions légales' }
   }
 }

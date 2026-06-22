@@ -2,8 +2,8 @@
 
 import { prisma, uploadImage, deleteImage } from '@imora/db'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { z } from 'zod'
+import { revalidateWebApp } from '@/lib/revalidate'
 
 const realisSchema = z.object({
   titre: z.string().min(1),
@@ -14,7 +14,7 @@ const realisSchema = z.object({
   status: z.enum(['DRAFT', 'PUBLISHED']).default('DRAFT'),
 })
 
-export async function createRealisation(formData: FormData) {
+export async function createRealisation(formData: FormData): Promise<{ success: boolean; error?: string }> {
   try {
     const raw = Object.fromEntries(formData.entries())
     const data = realisSchema.parse(raw)
@@ -31,14 +31,19 @@ export async function createRealisation(formData: FormData) {
         data: { realisationId: r.id, cloudinaryPublicId: publicId, ordre: i, isMain: i === mainIdx },
       })
     }
+
     revalidatePath('/realisations')
-  } catch {
-    return { success: false, error: 'Erreur lors de la création' }
+    revalidateWebApp(['/construction', '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
+    return { success: true }
+  } catch (error) {
+    console.error('[createRealisation]', error)
+    return { success: false, error: 'Erreur lors de la création de la réalisation' }
   }
-  redirect('/realisations')
 }
 
-export async function updateRealisation(id: string, formData: FormData) {
+export async function updateRealisation(id: string, formData: FormData): Promise<{ success: boolean; error?: string }> {
   try {
     const raw = Object.fromEntries(formData.entries())
     const data = realisSchema.parse(raw)
@@ -70,19 +75,27 @@ export async function updateRealisation(id: string, formData: FormData) {
     }
 
     revalidatePath('/realisations')
-  } catch {
-    return { success: false, error: 'Erreur' }
+    revalidateWebApp(['/construction', '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
+    return { success: true }
+  } catch (error) {
+    console.error('[updateRealisation]', error)
+    return { success: false, error: 'Erreur lors de la mise à jour de la réalisation' }
   }
-  redirect('/realisations')
 }
 
 export async function updateRealisationStatus(id: string, status: 'DRAFT' | 'PUBLISHED') {
   try {
     await prisma.realisation.update({ where: { id }, data: { status } })
     revalidatePath('/realisations')
+    revalidateWebApp(['/construction', '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[updateRealisationStatus]', error)
+    return { success: false, error: 'Erreur lors du changement de statut' }
   }
 }
 
@@ -92,8 +105,12 @@ export async function deleteRealisation(id: string) {
     await Promise.all(images.map((img) => deleteImage(img.cloudinaryPublicId)))
     await prisma.realisation.delete({ where: { id } })
     revalidatePath('/realisations')
+    revalidateWebApp(['/construction', '/']).catch((e) =>
+      console.warn('[revalidate] web sync failed:', e)
+    )
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[deleteRealisation]', error)
+    return { success: false, error: 'Erreur lors de la suppression' }
   }
 }

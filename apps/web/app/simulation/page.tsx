@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { Suspense } from 'react'
 import { prisma, getOptimizedUrl } from '@imora/db'
 import { SimulationWizard } from './SimulationWizard'
@@ -54,12 +55,18 @@ export default async function SimulationPage() {
   return (
     <>
       {/* Hero */}
-      <section style={{ backgroundColor: '#0D2A4E' }} className="py-16 px-4">
-        <div className="mx-auto max-w-7xl">
-          <h1 className="text-4xl md:text-5xl font-serif text-white">Simulation de Projet</h1>
-          <p className="mt-3 text-white/70 text-lg">
-            Estimez le coût de votre projet immobilier en 3 étapes simples
-          </p>
+      <section className="relative overflow-hidden" style={{ minHeight: 260, backgroundColor: '#0D2A4E' }}>
+        <div className="absolute inset-0">
+          <Image src="/demo/apart-7.png" alt="" fill className="object-cover" priority />
+          <div className="absolute inset-0" style={{ background: 'rgba(13,42,78,0.82)' }} />
+        </div>
+        <div className="relative z-10 py-16 px-4">
+          <div className="mx-auto max-w-7xl">
+            <h1 className="text-4xl md:text-5xl font-serif text-white">Simulation de Projet</h1>
+            <p className="mt-3 text-white/70 text-lg">
+              Estimez le coût de votre projet immobilier en 3 étapes simples
+            </p>
+          </div>
         </div>
       </section>
 

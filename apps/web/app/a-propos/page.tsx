@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
-import { prisma } from '@imora/db'
-import { getOptimizedUrl } from '@imora/db'
 import Image from 'next/image'
 import Link from 'next/link'
+import { prisma, getOptimizedUrl } from '@imora/db'
 
 export const revalidate = 3600
 
@@ -52,14 +51,20 @@ export default async function AProposPage() {
   return (
     <>
       {/* Hero */}
-      <section style={{ backgroundColor: '#0D2A4E' }} className="py-16 px-4">
-        <div className="mx-auto max-w-7xl">
-          <h1 className="text-4xl md:text-5xl font-serif text-white">
-            À Propos d&apos;IMORA AFRICA
-          </h1>
-          <p className="mt-3 text-white/70 text-lg">
-            Votre partenaire de confiance pour l&apos;immobilier en Afrique
-          </p>
+      <section className="relative overflow-hidden" style={{ minHeight: 260, backgroundColor: '#0D2A4E' }}>
+        <div className="absolute inset-0">
+          <Image src="/demo/apart-8.png" alt="" fill className="object-cover" priority />
+          <div className="absolute inset-0" style={{ background: 'rgba(13,42,78,0.80)' }} />
+        </div>
+        <div className="relative z-10 py-16 px-4">
+          <div className="mx-auto max-w-7xl">
+            <h1 className="text-4xl md:text-5xl font-serif text-white">
+              À Propos d&apos;IMORA AFRICA
+            </h1>
+            <p className="mt-3 text-white/70 text-lg">
+              Votre partenaire de confiance pour l&apos;immobilier en Afrique
+            </p>
+          </div>
         </div>
       </section>
 

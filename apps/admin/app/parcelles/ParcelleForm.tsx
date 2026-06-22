@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -13,14 +14,15 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Upload, X, Star } from 'lucide-react'
+import { LocationSelector, type LocationValue } from '@imora/ui'
 import type { Parcelle, ParcelleImage } from '@imora/db'
 
 const schema = z.object({
   titre: z.string().min(1, 'Titre requis'),
   pays: z.string().min(1, 'Pays requis'),
   ville: z.string().min(1, 'Ville requise'),
-  arrondissement: z.string().min(1),
-  quartier: z.string().min(1),
+  arrondissement: z.string().min(1, 'Arrondissement requis'),
+  quartier: z.string().min(1, 'Quartier requis'),
   prixFCFA: z.coerce.number().int().positive('Prix requis'),
   superficie: z.coerce.number().int().positive('Superficie requise'),
   distanceGoudron: z.coerce.number().int().optional(),
@@ -39,11 +41,12 @@ interface ExistingImage {
 
 interface ParcelleFormProps {
   parcelle?: Parcelle & { images: ParcelleImage[] }
-  action: (formData: FormData) => Promise<void>
+  action: (formData: FormData) => Promise<{ success: boolean; error?: string }>
   actionLabel: string
 }
 
 export function ParcelleForm({ parcelle, action, actionLabel }: ParcelleFormProps) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [titreFoncier, setTitreFoncier] = useState(parcelle?.titreFoncier ?? false)
   const [venteNotariee, setVenteNotariee] = useState(parcelle?.venteNotariee ?? false)
@@ -61,7 +64,7 @@ export function ParcelleForm({ parcelle, action, actionLabel }: ParcelleFormProp
   const [mainNewIdx, setMainNewIdx] = useState(0)
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema) as unknown as Resolver<FormData>,
     defaultValues: {
       titre: parcelle?.titre ?? '',
@@ -77,6 +80,17 @@ export function ParcelleForm({ parcelle, action, actionLabel }: ParcelleFormProp
       description: parcelle?.description ?? '',
     },
   })
+
+  // Watched values for LocationSelector
+  const pays = watch('pays')
+  const ville = watch('ville')
+  const arrondissement = watch('arrondissement')
+
+  function handleLocationChange(loc: LocationValue) {
+    setValue('pays', loc.pays, { shouldValidate: true })
+    setValue('ville', loc.ville, { shouldValidate: true })
+    setValue('arrondissement', loc.arrondissement, { shouldValidate: true })
+  }
 
   function handleFiles(files: FileList | null) {
     if (!files) return
@@ -117,11 +131,12 @@ export function ParcelleForm({ parcelle, action, actionLabel }: ParcelleFormProp
       fd.set('mainImageIdx', String(mainNewIdx))
       newFiles.forEach((f) => fd.append(parcelle ? 'newImages' : 'images', f))
 
-      try {
-        await action(fd as unknown as FormData)
-        toast.success('Enregistré avec succès')
-      } catch {
-        toast.error('Erreur lors de l\'enregistrement')
+      const res = await action(fd as unknown as FormData)
+      if (res.success) {
+        toast.success(status === 'PUBLISHED' ? 'Parcelle publiée avec succès' : 'Brouillon enregistré')
+        router.push('/parcelles')
+      } else {
+        toast.error(res.error ?? 'Erreur lors de l\'enregistrement')
       }
     })
   }
@@ -151,7 +166,6 @@ export function ParcelleForm({ parcelle, action, actionLabel }: ParcelleFormProp
             />
           </div>
 
-          {/* Existing images */}
           {existingImages.length > 0 && (
             <div className="mt-4">
               <p className="text-xs text-gray-400 mb-2">Photos existantes</p>
@@ -190,7 +204,6 @@ export function ParcelleForm({ parcelle, action, actionLabel }: ParcelleFormProp
             </div>
           )}
 
-          {/* New images */}
           {newPreviews.length > 0 && (
             <div className="mt-4">
               <p className="text-xs text-gray-400 mb-2">Nouvelles photos</p>
@@ -236,23 +249,21 @@ export function ParcelleForm({ parcelle, action, actionLabel }: ParcelleFormProp
           <Input {...register('titre')} placeholder="Ex: Parcelle viabilisée Calavi" />
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Pays *" error={errors.pays?.message}>
-            <Input {...register('pays')} />
-          </Field>
-          <Field label="Ville *" error={errors.ville?.message}>
-            <Input {...register('ville')} placeholder="Ex: Cotonou" />
-          </Field>
+        {/* Cascading location selector (Pays → Ville → Arrondissement) */}
+        <div className="rounded-lg border border-gray-100 bg-gray-50/50 p-4 space-y-1">
+          <p className="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wide">Localisation</p>
+          <LocationSelector
+            value={{ pays, ville, arrondissement }}
+            onChange={handleLocationChange}
+          />
+          {errors.pays && <p className="text-xs text-red-500 mt-1">{errors.pays.message}</p>}
+          {errors.ville && <p className="text-xs text-red-500 mt-1">{errors.ville.message}</p>}
+          {errors.arrondissement && <p className="text-xs text-red-500 mt-1">{errors.arrondissement.message}</p>}
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Arrondissement *" error={errors.arrondissement?.message}>
-            <Input {...register('arrondissement')} />
-          </Field>
-          <Field label="Quartier *" error={errors.quartier?.message}>
-            <Input {...register('quartier')} />
-          </Field>
-        </div>
+        <Field label="Quartier *" error={errors.quartier?.message}>
+          <Input {...register('quartier')} placeholder="Ex: Akpakpa Centre" />
+        </Field>
 
         <div className="grid grid-cols-2 gap-3">
           <Field label="Prix FCFA *" error={errors.prixFCFA?.message}>

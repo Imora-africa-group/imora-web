@@ -1,3 +1,7 @@
+export { BENIN_VILLES, BENIN_VILLE_NOMS, getArrondissements } from './geo-benin'
+export type { BéninVille } from './geo-benin'
+export { WORLD_COUNTRIES } from './geo-countries'
+
 // Enums — mirrors Prisma schema exactly (string union types for portability)
 export type StandingType = 'BASIQUE' | 'MOYEN' | 'HAUT_STANDING' | 'LUXE'
 export type LeadStatus = 'NOUVEAU' | 'EN_COURS' | 'TRAITE' | 'ARCHIVE'

@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
 import { Phone, Mail, MapPin } from 'lucide-react'
 import { prisma } from '@imora/db'
 import { buildWhatsAppUrl, WA_MESSAGES } from '@imora/db'
-import Link from 'next/link'
 import { ContactForm } from './ContactForm'
 
 export const revalidate = 3600
@@ -25,12 +26,18 @@ export default async function ContactPage() {
   return (
     <>
       {/* Hero */}
-      <section style={{ backgroundColor: '#0D2A4E' }} className="py-16 px-4">
-        <div className="mx-auto max-w-7xl">
-          <h1 className="text-4xl md:text-5xl font-serif text-white">Contactez-nous</h1>
-          <p className="mt-3 text-white/70 text-lg">
-            Notre équipe est à votre écoute pour répondre à toutes vos questions
-          </p>
+      <section className="relative overflow-hidden" style={{ minHeight: 260, backgroundColor: '#0D2A4E' }}>
+        <div className="absolute inset-0">
+          <Image src="/demo/apart-11.png" alt="" fill className="object-cover" priority />
+          <div className="absolute inset-0" style={{ background: 'rgba(13,42,78,0.82)' }} />
+        </div>
+        <div className="relative z-10 py-16 px-4">
+          <div className="mx-auto max-w-7xl">
+            <h1 className="text-4xl md:text-5xl font-serif text-white">Contactez-nous</h1>
+            <p className="mt-3 text-white/70 text-lg">
+              Notre équipe est à votre écoute pour répondre à toutes vos questions
+            </p>
+          </div>
         </div>
       </section>
 

@@ -1,4 +1,6 @@
 export { PriceDisplay } from './components/PriceDisplay'
 export { StatusBadge } from './components/StatusBadge'
 export { WhatsAppButton } from './components/WhatsAppButton'
+export { LocationSelector, PaysSelector } from './components/LocationSelector'
+export type { LocationValue } from './components/LocationSelector'
 export { cn } from './lib/utils'

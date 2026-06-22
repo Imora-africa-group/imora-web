@@ -2,6 +2,7 @@
 
 import { prisma, uploadImage, deleteImage } from '@imora/db'
 import { revalidatePath } from 'next/cache'
+import { revalidateWebApp } from '@/lib/revalidate'
 
 export async function createPartenaire(formData: FormData) {
   try {
@@ -15,9 +16,11 @@ export async function createPartenaire(formData: FormData) {
 
     await prisma.partenaire.create({ data: { nom, cloudinaryPublicId: publicId, ordre } })
     revalidatePath('/partenaires')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur lors de la création' }
+  } catch (error) {
+    console.error('[createPartenaire]', error)
+    return { success: false, error: 'Erreur lors de la création du partenaire' }
   }
 }
 
@@ -37,9 +40,11 @@ export async function updatePartenaire(id: string, formData: FormData) {
 
     await prisma.partenaire.update({ where: { id }, data })
     revalidatePath('/partenaires')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur lors de la mise à jour' }
+  } catch (error) {
+    console.error('[updatePartenaire]', error)
+    return { success: false, error: 'Erreur lors de la mise à jour du partenaire' }
   }
 }
 
@@ -47,9 +52,11 @@ export async function togglePartenaire(id: string, isActive: boolean) {
   try {
     await prisma.partenaire.update({ where: { id }, data: { isActive } })
     revalidatePath('/partenaires')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[togglePartenaire]', error)
+    return { success: false, error: 'Erreur lors du changement de statut' }
   }
 }
 
@@ -59,8 +66,10 @@ export async function deletePartenaire(id: string) {
     if (p) await deleteImage(p.cloudinaryPublicId)
     await prisma.partenaire.delete({ where: { id } })
     revalidatePath('/partenaires')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
+  } catch (error) {
+    console.error('[deletePartenaire]', error)
     return { success: false, error: 'Erreur lors de la suppression' }
   }
 }

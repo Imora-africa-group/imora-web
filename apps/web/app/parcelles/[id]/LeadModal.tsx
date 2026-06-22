@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from 'react'
 import { X } from 'lucide-react'
+import { PaysSelector } from '@imora/ui'
 import { submitParcelleLead } from './actions'
 
 interface LeadModalProps {
@@ -14,6 +15,7 @@ export function LeadModal({ parcelleId, parcelleTitre, onClose }: LeadModalProps
   const [isPending, startTransition] = useTransition()
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [pays, setPays] = useState('')
   const formRef = useRef<HTMLFormElement>(null)
 
   function handleSubmit(fd: FormData) {
@@ -76,6 +78,12 @@ export function LeadModal({ parcelleId, parcelleTitre, onClose }: LeadModalProps
                 <label className="block text-xs font-medium text-gray-600 mb-1">Email *</label>
                 <input name="email" type="email" required className={fieldClass} />
               </div>
+              <PaysSelector
+                value={pays}
+                onChange={setPays}
+                name="pays"
+                label="Pays de résidence"
+              />
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Message</label>
                 <textarea name="message" rows={3} className={`${fieldClass} resize-none`}

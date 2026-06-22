@@ -6,10 +6,15 @@ const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://imoraafricagroup.com'
 export const revalidate = 3600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const parcelles = await prisma.parcelle.findMany({
-    where: { status: 'PUBLISHED' },
-    select: { id: true, updatedAt: true },
-  })
+  let parcelles: { id: string; updatedAt: Date }[] = []
+  try {
+    parcelles = await prisma.parcelle.findMany({
+      where: { status: 'PUBLISHED' },
+      select: { id: true, updatedAt: true },
+    })
+  } catch (error) {
+    console.error('[sitemap] DB query failed, skipping parcelle URLs:', error)
+  }
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },

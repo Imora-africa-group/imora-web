@@ -5,6 +5,7 @@ import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Check, MessageCircle } from 'lucide-react'
+import { PaysSelector } from '@imora/ui'
 import { submitSimulation } from './actions'
 import { cn } from '@/lib/utils'
 
@@ -160,17 +161,11 @@ export function SimulationWizard({ parcelles, modeles, loyers, rates, waNumber }
             Étape 1: Votre Parcelle
           </h2>
           <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Pays</label>
-              <select className={selectClass} value={pays} onChange={(e) => setPays(e.target.value)}>
-                <option value="Bénin">Bénin</option>
-                <option value="Côte d'Ivoire">Côte d&apos;Ivoire</option>
-                <option value="Sénégal">Sénégal</option>
-                <option value="Cameroun">Cameroun</option>
-                <option value="Mali">Mali</option>
-                <option value="Togo">Togo</option>
-              </select>
-            </div>
+            <PaysSelector
+              value={pays}
+              onChange={(p) => { setPays(p); setVille(''); setArrondissement('') }}
+              label="Pays"
+            />
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Ville</label>
               <select className={selectClass} value={ville} onChange={(e) => { setVille(e.target.value); setArrondissement('') }}>

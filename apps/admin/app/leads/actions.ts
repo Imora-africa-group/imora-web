@@ -20,8 +20,9 @@ export async function updateLead(data: z.infer<typeof updateLeadSchema>) {
     revalidatePath('/leads')
     revalidatePath(`/leads/${parsed.id}`)
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur lors de la mise à jour' }
+  } catch (error) {
+    console.error('[updateLead]', error)
+    return { success: false, error: 'Erreur lors de la mise à jour du lead' }
   }
 }
 
@@ -30,7 +31,8 @@ export async function deleteLead(id: string) {
     await prisma.lead.delete({ where: { id } })
     revalidatePath('/leads')
     return { success: true }
-  } catch {
+  } catch (error) {
+    console.error('[deleteLead]', error)
     return { success: false, error: 'Erreur lors de la suppression' }
   }
 }

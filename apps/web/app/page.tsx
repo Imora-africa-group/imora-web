@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { MapPin, Building2, Key } from 'lucide-react'
 import { prisma, getOptimizedUrl, WA_MESSAGES } from '@imora/db'
 import { StatsSection } from '@/components/StatsCounter'
+import { OffresSection } from '@/components/OffresSection'
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel'
 import { FaqAccordion } from '@/components/FaqAccordion'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
@@ -74,10 +75,16 @@ export default async function HomePage() {
     <>
       {/* ── HERO ── */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0" style={{ backgroundColor: '#0D2A4E' }}>
-          <div className="absolute inset-0 opacity-20 bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900" />
+        <div className="absolute inset-0">
+          <Image
+            src="/demo/apart-9.png"
+            alt=""
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(13,42,78,0.82) 0%, rgba(13,42,78,0.65) 60%, rgba(13,42,78,0.82) 100%)' }} />
         </div>
-        <div className="absolute inset-0" style={{ background: 'rgba(13,42,78,0.72)' }} />
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white leading-tight">
             {settings?.sloganText ?? "L'immobilier sécurisé, sans tracasserie"}
@@ -139,6 +146,9 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── OFFRES ── */}
+      <OffresSection />
+
       {/* ── STATS ── */}
       <StatsSection stats={stats} />
 
@@ -149,20 +159,33 @@ export default async function HomePage() {
             <h2 className="text-2xl font-serif font-bold text-center mb-10" style={{ color: '#0D2A4E' }}>
               Nos Partenaires de Confiance
             </h2>
-          </div>
-          <div className="relative flex overflow-hidden">
-            <div className="flex animate-marquee gap-16 items-center">
-              {[...partenaires, ...partenaires].map((p, i) => {
-                const url = getOptimizedUrl(p.cloudinaryPublicId, 160, 80)
-                return (
-                  <div
-                    key={`${p.id}-${i}`}
-                    className="shrink-0 h-12 w-32 relative grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
-                  >
-                    <Image src={url} alt={p.nom} fill className="object-contain" />
-                  </div>
-                )
-              })}
+            <div className="relative flex overflow-hidden">
+              <div className="flex animate-marquee gap-6 items-center">
+                {[...partenaires, ...partenaires].map((p, i) =>
+                  p.cloudinaryPublicId ? (
+                    <div
+                      key={`${p.id}-${i}`}
+                      className="shrink-0 h-16 w-40 relative grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100 flex items-center justify-center border border-gray-100 rounded-xl bg-white px-4"
+                    >
+                      <Image
+                        src={getOptimizedUrl(p.cloudinaryPublicId, 160, 64)}
+                        alt={p.nom}
+                        fill
+                        className="object-contain p-2"
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      key={`${p.id}-${i}`}
+                      className="shrink-0 h-16 flex items-center justify-center border border-gray-200 rounded-xl bg-white px-6 opacity-70 hover:opacity-100 transition-opacity"
+                    >
+                      <span className="text-sm font-semibold whitespace-nowrap" style={{ color: '#0D2A4E' }}>
+                        {p.nom}
+                      </span>
+                    </div>
+                  )
+                )}
+              </div>
             </div>
           </div>
         </section>

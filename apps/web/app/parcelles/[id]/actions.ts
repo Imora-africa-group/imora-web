@@ -16,6 +16,8 @@ export async function submitParcelleLead(
       return { success: false, error: 'Veuillez remplir tous les champs obligatoires.' }
     }
 
+    const pays = String(fd.get('pays') ?? '').trim() || 'Non précisé'
+
     const lead = await prisma.lead.create({
       data: {
         nom,
@@ -23,7 +25,7 @@ export async function submitParcelleLead(
         telephone,
         indicatif: '+229',
         email,
-        pays: 'Non précisé',
+        pays,
         message,
         serviceType: 'PARCELLE',
       },

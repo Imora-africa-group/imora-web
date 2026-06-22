@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { MapPin, MessageCircle } from 'lucide-react'
 import { prisma, getOptimizedUrl, buildWhatsAppUrl, WA_MESSAGES } from '@imora/db'
-import { PriceDisplay } from '@/components/PriceDisplay'
 import { ParcellesFilters } from './ParcellesFilters'
 
 export const revalidate = 3600
@@ -78,12 +77,18 @@ export default async function ParcellesPage({ searchParams }: PageProps) {
   return (
     <>
       {/* Hero */}
-      <section style={{ backgroundColor: '#0D2A4E' }} className="py-16 px-4">
-        <div className="mx-auto max-w-7xl">
-          <h1 className="text-4xl md:text-5xl font-serif text-white">Nos Parcelles Disponibles</h1>
-          <p className="mt-3 text-white/70 text-lg">
-            Découvrez nos terrains avec Titre Foncier, vérifiés et prêts à bâtir dans toute l&apos;Afrique de l&apos;Ouest.
-          </p>
+      <section className="relative overflow-hidden" style={{ minHeight: 260, backgroundColor: '#0D2A4E' }}>
+        <div className="absolute inset-0">
+          <Image src="/demo/apart-2.png" alt="" fill className="object-cover" priority />
+          <div className="absolute inset-0" style={{ background: 'rgba(13,42,78,0.80)' }} />
+        </div>
+        <div className="relative z-10 py-16 px-4">
+          <div className="mx-auto max-w-7xl">
+            <h1 className="text-4xl md:text-5xl font-serif text-white">Nos Parcelles Disponibles</h1>
+            <p className="mt-3 text-white/70 text-lg">
+              Découvrez nos terrains avec Titre Foncier, vérifiés et prêts à bâtir dans toute l&apos;Afrique de l&apos;Ouest.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -116,9 +121,11 @@ export default async function ParcellesPage({ searchParams }: PageProps) {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {parcelles.map((p) => {
+              {parcelles.map((p, idx) => {
                 const mainImg = p.images.find((i) => i.isMain) ?? p.images[0]
-                const imgUrl = mainImg ? getOptimizedUrl(mainImg.cloudinaryPublicId, 600, 338) : null
+                const imgUrl = mainImg
+                  ? getOptimizedUrl(mainImg.cloudinaryPublicId, 600, 400)
+                  : `/demo/apart-${(idx % 12) + 1}.png`
                 const usd = Math.round(p.prixFCFA * rates.usd)
                 const eur = Math.round(p.prixFCFA * rates.eur)
                 const waMsg = WA_MESSAGES.parcelle(p.titre)
@@ -129,52 +136,97 @@ export default async function ParcellesPage({ searchParams }: PageProps) {
                     key={p.id}
                     className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300"
                   >
-                    {/* Photo */}
-                    <div className="relative aspect-video overflow-hidden bg-gray-100">
-                      {imgUrl ? (
-                        <Image src={imgUrl} alt={p.titre} fill className="object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <MapPin size={32} className="text-gray-300" />
+                    {/* Image + badges overlay */}
+                    <div className="relative h-52 overflow-hidden bg-gray-100">
+                      <Image
+                        src={imgUrl}
+                        alt={p.titre}
+                        fill
+                        className="object-cover transition-transform duration-500 hover:scale-105"
+                      />
+
+                      {/* Badges sur l'image */}
+                      {(p.titreFoncier || p.venteNotariee) && (
+                        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+                          {p.titreFoncier && (
+                            <span className="flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-medium bg-white/90 text-gray-800 shadow-sm backdrop-blur-sm">
+                              <span className="w-3 h-3 rounded-full border-2 border-gray-700 shrink-0 inline-block" />
+                              Titre Foncier
+                            </span>
+                          )}
+                          {p.venteNotariee && (
+                            <span className="flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-medium bg-white/90 text-gray-800 shadow-sm backdrop-blur-sm">
+                              <span className="w-3 h-3 rounded-full border-2 border-gray-700 shrink-0 inline-block" />
+                              Vente Notariée
+                            </span>
+                          )}
                         </div>
                       )}
+
+                      {/* Surface badge bottom-right */}
+                      <div className="absolute bottom-3 right-3">
+                        <span className="text-xs px-2.5 py-1 rounded-full font-semibold bg-black/50 text-white backdrop-blur-sm">
+                          {p.superficie.toLocaleString('fr-FR')} m²
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Badges sous la photo */}
-                    {(p.titreFoncier || p.venteNotariee) && (
-                      <div className="flex gap-2 px-4 pt-3">
-                        {p.titreFoncier && (
-                          <span className="text-xs px-2 py-1 rounded-full font-medium border"
-                            style={{ borderColor: '#C9A84C', color: '#C9A84C', backgroundColor: '#FFFBEB' }}>
-                            ✓ Titre Foncier
-                          </span>
-                        )}
-                        {p.venteNotariee && (
-                          <span className="text-xs px-2 py-1 rounded-full font-medium border border-blue-200 text-blue-700 bg-blue-50">
-                            ✓ Vente Notariée
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Info */}
+                    {/* Corps de la carte */}
                     <div className="p-4">
-                      <h3 className="font-semibold text-gray-900 leading-tight">{p.titre}</h3>
-                      <div className="flex items-center gap-1 mt-1">
+                      <h3 className="font-semibold text-gray-900 leading-tight line-clamp-2">
+                        {p.titre}
+                      </h3>
+                      <div className="flex items-center gap-1.5 mt-1.5">
                         <MapPin size={12} className="text-gray-400 shrink-0" />
-                        <span className="text-xs text-gray-500">{p.arrondissement}, {p.ville}</span>
+                        <span className="text-xs text-gray-500 truncate">
+                          {p.arrondissement}, {p.ville}, {p.pays}
+                        </span>
                       </div>
+
+                      {/* Prix */}
                       <div className="mt-3">
-                        <PriceDisplay fcfa={p.prixFCFA} usd={usd} eur={eur} size="md" />
-                        <p className="text-xs text-gray-400 mt-1">{p.superficie.toLocaleString('fr-FR')} m²</p>
+                        <p className="text-xl font-bold" style={{ color: '#0D2A4E' }}>
+                          {p.prixFCFA.toLocaleString('fr-FR')}{' '}
+                          <span className="text-base font-semibold">FCFA</span>
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          ${usd.toLocaleString('en')} · €{eur.toLocaleString('en')}
+                        </p>
                       </div>
+
+                      {/* Badges légaux */}
+                      {(p.titreFoncier || p.venteNotariee || p.viabilisation) && (
+                        <div className="flex flex-wrap gap-1.5 mt-3">
+                          {p.titreFoncier && (
+                            <span
+                              className="flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full border font-medium"
+                              style={{ borderColor: '#C9A84C', color: '#C9A84C', backgroundColor: '#FFFBEB' }}
+                            >
+                              <span className="w-2 h-2 rounded-full border border-current inline-block" />
+                              Titre Foncier
+                            </span>
+                          )}
+                          {p.venteNotariee && (
+                            <span className="flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full border border-blue-200 text-blue-700 bg-blue-50 font-medium">
+                              <span className="w-2 h-2 rounded-full border border-current inline-block" />
+                              Vente Notariée
+                            </span>
+                          )}
+                          {p.viabilisation && (
+                            <span className="flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full border border-green-200 text-green-700 bg-green-50 font-medium">
+                              <span className="w-2 h-2 rounded-full border border-current inline-block" />
+                              Viabilisé
+                            </span>
+                          )}
+                        </div>
+                      )}
 
                       {/* CTAs */}
                       <div className="flex gap-2 mt-4">
                         <Link
                           href={`/parcelles/${p.id}`}
                           className="flex-1 text-center rounded-full py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                          style={{ backgroundColor: '#0D2A4E' }}
+                          style={{ backgroundColor: '#C9A84C' }}
                         >
                           Je suis intéressé
                         </Link>
@@ -183,7 +235,7 @@ export default async function ParcellesPage({ searchParams }: PageProps) {
                             href={waUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="WhatsApp"
+                            aria-label="Contacter sur WhatsApp"
                             className="h-10 w-10 flex items-center justify-center rounded-full shrink-0 transition-opacity hover:opacity-90"
                             style={{ backgroundColor: '#25D366' }}
                           >

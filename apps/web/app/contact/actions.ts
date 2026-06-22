@@ -1,7 +1,6 @@
 'use server'
 
 import { prisma, sendLeadNotification } from '@imora/db'
-import { revalidatePath } from 'next/cache'
 
 export async function submitContactForm(fd: FormData): Promise<{ success: boolean; error?: string }> {
   try {
@@ -16,6 +15,8 @@ export async function submitContactForm(fd: FormData): Promise<{ success: boolea
       return { success: false, error: 'Veuillez remplir tous les champs obligatoires.' }
     }
 
+    const pays = String(fd.get('pays') ?? '').trim() || 'Non précisé'
+
     const lead = await prisma.lead.create({
       data: {
         nom,
@@ -23,7 +24,7 @@ export async function submitContactForm(fd: FormData): Promise<{ success: boolea
         telephone,
         indicatif: '+229',
         email,
-        pays: 'Non précisé',
+        pays,
         message: sujet ? `[${sujet}] ${message}` : message,
         serviceType: 'LOCATIVE',
       },
@@ -31,7 +32,6 @@ export async function submitContactForm(fd: FormData): Promise<{ success: boolea
 
     await sendLeadNotification(lead).catch(() => {})
 
-    revalidatePath('/contact')
     return { success: true }
   } catch {
     return { success: false, error: 'Une erreur est survenue. Veuillez réessayer.' }

@@ -5,14 +5,14 @@ export const authConfig: NextAuthConfig = {
   session: { strategy: 'jwt' },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user
+      const isLoggedIn = !!auth
       const isLoginPage = nextUrl.pathname === '/login'
 
-      if (!isLoggedIn && !isLoginPage) {
-        return Response.redirect(new URL('/login', nextUrl))
-      }
       if (isLoggedIn && isLoginPage) {
         return Response.redirect(new URL('/', nextUrl))
+      }
+      if (!isLoggedIn && !isLoginPage) {
+        return false
       }
       return true
     },

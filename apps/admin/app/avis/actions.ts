@@ -3,6 +3,7 @@
 import { prisma, uploadImage, deleteImage } from '@imora/db'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { revalidateWebApp } from '@/lib/revalidate'
 
 const avisSchema = z.object({
   nomClient: z.string().min(1),
@@ -25,16 +26,14 @@ export async function createAvis(formData: FormData) {
     }
 
     await prisma.avis.create({
-      data: {
-        ...data,
-        dateAvis: new Date(data.dateAvis),
-        cloudinaryPublicId,
-      },
+      data: { ...data, dateAvis: new Date(data.dateAvis), cloudinaryPublicId },
     })
     revalidatePath('/avis')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur lors de la création' }
+  } catch (error) {
+    console.error('[createAvis]', error)
+    return { success: false, error: 'Erreur lors de la création de l\'avis' }
   }
 }
 
@@ -47,10 +46,7 @@ export async function updateAvis(id: string, formData: FormData) {
     const updateData: {
       nomClient: string; note: number; texte: string; dateAvis: Date; isPublished: boolean;
       cloudinaryPublicId?: string | null
-    } = {
-      ...data,
-      dateAvis: new Date(data.dateAvis),
-    }
+    } = { ...data, dateAvis: new Date(data.dateAvis) }
 
     if (file && file.size > 0) {
       const existing = await prisma.avis.findUnique({ where: { id } })
@@ -61,9 +57,11 @@ export async function updateAvis(id: string, formData: FormData) {
 
     await prisma.avis.update({ where: { id }, data: updateData })
     revalidatePath('/avis')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur lors de la mise à jour' }
+  } catch (error) {
+    console.error('[updateAvis]', error)
+    return { success: false, error: 'Erreur lors de la mise à jour de l\'avis' }
   }
 }
 
@@ -71,9 +69,11 @@ export async function toggleAvis(id: string, isPublished: boolean) {
   try {
     await prisma.avis.update({ where: { id }, data: { isPublished } })
     revalidatePath('/avis')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[toggleAvis]', error)
+    return { success: false, error: 'Erreur lors du changement de visibilité' }
   }
 }
 
@@ -83,8 +83,10 @@ export async function deleteAvis(id: string) {
     if (a?.cloudinaryPublicId) await deleteImage(a.cloudinaryPublicId)
     await prisma.avis.delete({ where: { id } })
     revalidatePath('/avis')
+    revalidateWebApp(['/']).catch((e) => console.warn('[revalidate] web sync failed:', e))
     return { success: true }
-  } catch {
-    return { success: false, error: 'Erreur' }
+  } catch (error) {
+    console.error('[deleteAvis]', error)
+    return { success: false, error: 'Erreur lors de la suppression' }
   }
 }
