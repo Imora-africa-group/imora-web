@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Settings } from '@imora/db'
 
 interface FooterProps {
@@ -81,9 +82,16 @@ export function Footer({ settings }: FooterProps) {
           </div>
 
           {settings?.whatsappNumber && (
-            <span className="text-xs text-[#717171] shrink-0">
+            <Link
+              href={`https://wa.me/${settings.whatsappNumber.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs text-[#717171] hover:text-[#25D366] transition-colors shrink-0"
+              aria-label="WhatsApp"
+            >
+              <Image src="/icon/whatsapp-green.png" width={14} height={14} alt="WhatsApp" />
               {settings.whatsappNumber}
-            </span>
+            </Link>
           )}
         </div>
 

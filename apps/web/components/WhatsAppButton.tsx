@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { MessageCircle } from 'lucide-react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { buildWhatsAppUrl, WA_MESSAGES } from '@/lib/whatsapp'
 
@@ -37,7 +37,7 @@ export function WhatsAppButton({
         )}
         style={{ backgroundColor: '#25D366' }}
       >
-        <MessageCircle size={28} className="text-white" fill="white" />
+        <Image src="/icon/whatsapp-green.png" width={28} height={28} alt="WhatsApp" />
       </Link>
     )
   }
@@ -53,7 +53,7 @@ export function WhatsAppButton({
       )}
       style={{ backgroundColor: '#25D366' }}
     >
-      <MessageCircle size={20} fill="white" />
+      <Image src="/icon/whatsapp-white.png" width={20} height={20} alt="WhatsApp" />
       {label}
     </Link>
   )

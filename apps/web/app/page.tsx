@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { MapPin, Building2, Key } from 'lucide-react'
-import { prisma, getOptimizedUrl, WA_MESSAGES } from '@imora/db'
+import { prisma, getOptimizedUrl } from '@imora/db'
 import { StatsSection } from '@/components/StatsCounter'
 import { OffresSection } from '@/components/OffresSection'
+import { GalerieSection } from '@/components/GalerieSection'
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel'
 import { FaqAccordion } from '@/components/FaqAccordion'
-import { WhatsAppButton } from '@/components/WhatsAppButton'
+import { CTASection } from '@/components/CTASection'
 
 export const revalidate = 3600
 
@@ -149,8 +150,14 @@ export default async function HomePage() {
       {/* ── OFFRES ── */}
       <OffresSection />
 
-      {/* ── STATS ── */}
-      <StatsSection stats={stats} />
+      {/* ── GALERIE ── */}
+      <GalerieSection />
+
+      {/* ── STATS (masquée si tous les compteurs sont à 0) ── */}
+      {((override?.projetsRealises ?? 0) > 0 ||
+        (override?.clientsSatisfaits ?? 0) > 0 ||
+        parcelleCount > 5 ||
+        partenaireCount > 3) && <StatsSection stats={stats} />}
 
       {/* ── PARTENAIRES ── */}
       {partenaires.length > 0 && (
@@ -216,33 +223,7 @@ export default async function HomePage() {
       )}
 
       {/* ── CTA FINAL ── */}
-      <section style={{ backgroundColor: '#0D2A4E' }} className="py-20 px-4">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl md:text-4xl font-serif text-white">
-            Prêt à concrétiser votre projet immobilier ?
-          </h2>
-          <p className="mt-4 text-white/70 text-lg">
-            Notre équipe vous accompagne de A à Z pour sécuriser votre investissement.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/simulation"
-              className="inline-flex items-center rounded-full px-8 py-3.5 font-semibold text-white transition-opacity hover:opacity-90"
-              style={{ backgroundColor: '#C9A84C' }}
-            >
-              Démarrer mon projet
-            </Link>
-            {waNumber && (
-              <WhatsAppButton
-                phone={waNumber}
-                message={WA_MESSAGES.general}
-                variant="inline"
-                label="Nous écrire sur WhatsApp"
-              />
-            )}
-          </div>
-        </div>
-      </section>
+      <CTASection phone={waNumber} />
     </>
   )
 }

@@ -70,13 +70,21 @@ const offres: OffreCardProps[] = [
 
 export function OffresSection() {
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section id="offres" className="py-16 md:py-24 bg-white">
       <div className="mx-auto max-w-7xl px-6">
         {/* En-tête */}
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="font-serif text-4xl mb-4" style={{ color: '#0D2A4E' }}>
-            Découvrez nos offres
-          </h2>
+        <div className="mb-12 md:mb-16">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-serif text-4xl" style={{ color: '#0D2A4E' }}>
+              Découvrez nos offres
+            </h2>
+            <Link
+              href="#offres"
+              className="shrink-0 ml-6 text-sm font-medium border-[1.5px] border-[#0D2A4E] rounded-[24px] px-5 py-2 text-[#0D2A4E] transition-colors duration-200 hover:bg-[#0D2A4E] hover:text-white"
+            >
+              Voir tout →
+            </Link>
+          </div>
           <p className="text-lg" style={{ color: '#4A6080' }}>
             Parcelles sécurisées, constructions clé en main, logements à louer — tout en un
             seul endroit.
