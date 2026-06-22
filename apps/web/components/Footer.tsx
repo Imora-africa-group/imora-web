@@ -1,129 +1,92 @@
 import Link from 'next/link'
-import { MessageCircle } from 'lucide-react'
 import type { Settings } from '@imora/db'
-import { buildWhatsAppUrl, WA_MESSAGES } from '@imora/db'
 
 interface FooterProps {
   settings: Settings | null
 }
 
+const navLinks = [
+  { label: 'Parcelles', href: '/parcelles' },
+  { label: 'Construction', href: '/construction' },
+  { label: 'Gestion Locative', href: '/gestion-locative' },
+  { label: 'À Propos', href: '/a-propos' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Simulation', href: '/simulation' },
+]
+
 export function Footer({ settings }: FooterProps) {
-  const waUrl = settings?.whatsappNumber
-    ? buildWhatsAppUrl(settings.whatsappNumber, WA_MESSAGES.general)
-    : '#'
-
   return (
-    <footer style={{ backgroundColor: '#0D2A4E' }} className="text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {/* Brand */}
-          <div className="lg:col-span-1">
-            <div className="mb-4">
-              <span className="font-serif text-2xl" style={{ color: '#C9A84C' }}>IMORA</span>
-              <span className="font-serif text-2xl text-white ml-1.5">AFRICA</span>
-            </div>
-            <p className="text-white/60 text-sm leading-relaxed">
-              {settings?.sloganText ?? "L'immobilier sécurisé, sans tracasserie"}
-            </p>
-            {/* Social */}
-            <div className="flex gap-3 mt-6">
-                {settings?.facebookUrl && (
-                <Link href={settings.facebookUrl} target="_blank" rel="noopener noreferrer"
-                  className="h-9 w-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:border-white/40 transition-colors text-xs font-bold">
-                  f
+    <footer className="bg-white border-t border-[#E5E7EB]">
+      <div className="mx-auto max-w-7xl px-6 py-8">
+
+        {/* Ligne 1 : nav links | icônes réseaux */}
+        <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between md:items-center">
+          <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-4 gap-y-2">
+            <span className="text-sm font-semibold text-[#222222]">IMORA AFRICA</span>
+            {navLinks.map((l) => (
+              <span key={l.href} className="flex items-center gap-4">
+                <span className="text-[#D1D5DB] select-none">·</span>
+                <Link href={l.href} className="text-sm text-[#222222] hover:underline">
+                  {l.label}
                 </Link>
-              )}
-              {settings?.instagramUrl && (
-                <Link href={settings.instagramUrl} target="_blank" rel="noopener noreferrer"
-                  className="h-9 w-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:border-white/40 transition-colors text-xs font-bold">
-                  in
-                </Link>
-              )}
-              {settings?.linkedinUrl && (
-                <Link href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer"
-                  className="h-9 w-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:border-white/40 transition-colors text-xs font-bold">
-                  li
-                </Link>
-              )}
-              {settings?.youtubeUrl && (
-                <Link href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer"
-                  className="h-9 w-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:border-white/40 transition-colors text-xs font-bold">
-                  yt
-                </Link>
-              )}
-            </div>
+              </span>
+            ))}
           </div>
 
-          {/* Services */}
-          <div>
-            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Services</h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: 'Parcelles', href: '/parcelles' },
-                { label: 'Construction', href: '/construction' },
-                { label: 'Gestion Locative', href: '/gestion-locative' },
-                { label: 'Simulation', href: '/simulation' },
-              ].map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="text-white/60 hover:text-white text-sm transition-colors">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Pages */}
-          <div>
-            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Entreprise</h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: 'À Propos', href: '/a-propos' },
-                { label: 'Contact', href: '/contact' },
-              ].map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="text-white/60 hover:text-white text-sm transition-colors">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-              {settings?.mentionsLegales && (
-                <li>
-                  <Link href="/mentions-legales" className="text-white/60 hover:text-white text-sm transition-colors">
-                    Mentions légales
-                  </Link>
-                </li>
-              )}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Contact</h4>
-            <p className="text-white/60 text-sm mb-4">
-              Disponibles 7j/7 pour vous accompagner dans votre projet immobilier.
-            </p>
-            <Link
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-              style={{ backgroundColor: '#25D366' }}
-            >
-              <MessageCircle size={16} fill="white" />
-              WhatsApp
-            </Link>
+          {/* Icônes réseaux sociaux */}
+          <div className="flex items-center gap-4 shrink-0">
+            {settings?.facebookUrl && (
+              <Link href={settings.facebookUrl} target="_blank" rel="noopener noreferrer"
+                className="hover:opacity-70 transition-opacity" aria-label="Facebook">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#0D2A4E" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+              </Link>
+            )}
+            {settings?.instagramUrl && (
+              <Link href={settings.instagramUrl} target="_blank" rel="noopener noreferrer"
+                className="hover:opacity-70 transition-opacity" aria-label="Instagram">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D2A4E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.5" cy="6.5" r="0.5" fill="#0D2A4E" stroke="none"/>
+                </svg>
+              </Link>
+            )}
+            {settings?.linkedinUrl && (
+              <Link href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                className="hover:opacity-70 transition-opacity" aria-label="LinkedIn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#0D2A4E" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/>
+                  <circle cx="4" cy="4" r="2"/>
+                </svg>
+              </Link>
+            )}
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-white/40 text-sm">IMORA AFRICA © {new Date().getFullYear()} — Tous droits réservés</p>
-          {settings?.mentionsLegales && (
-            <Link href="/mentions-legales" className="text-white/40 hover:text-white/70 text-sm transition-colors">
-              Mentions légales
-            </Link>
+        {/* Séparateur */}
+        <div className="border-t border-[#E5E7EB] my-6" />
+
+        {/* Ligne 2 : copyright + légal | numéro WhatsApp */}
+        <div className="flex flex-col items-center gap-2 md:flex-row md:justify-between md:items-center">
+          <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-3 gap-y-1">
+            <span className="text-xs text-[#717171]">© {new Date().getFullYear()} IMORA AFRICA, Inc.</span>
+            <span className="text-[#D1D5DB] text-xs select-none">·</span>
+            <Link href="/confidentialite" className="text-xs text-[#717171] hover:underline">Confidentialité</Link>
+            <span className="text-[#D1D5DB] text-xs select-none">·</span>
+            <Link href="/conditions" className="text-xs text-[#717171] hover:underline">Conditions</Link>
+            <span className="text-[#D1D5DB] text-xs select-none">·</span>
+            <Link href="/mentions-legales" className="text-xs text-[#717171] hover:underline">Mentions légales</Link>
+          </div>
+
+          {settings?.whatsappNumber && (
+            <span className="text-xs text-[#717171] shrink-0">
+              {settings.whatsappNumber}
+            </span>
           )}
         </div>
+
       </div>
     </footer>
   )

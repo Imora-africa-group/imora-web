@@ -1,17 +1,16 @@
 import type { Metadata } from 'next'
-import { DM_Sans, DM_Serif_Display } from 'next/font/google'
+import { Roboto } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { prisma } from '@imora/db'
 
-const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
-const dmSerif = DM_Serif_Display({
+const roboto = Roboto({
   subsets: ['latin'],
-  weight: '400',
-  variable: '--font-serif',
+  weight: ['300', '400', '500', '700'],
   display: 'swap',
+  variable: '--font-roboto',
 })
 
 export const metadata: Metadata = {
@@ -29,7 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const waNumber = settings?.whatsappNumber ?? ''
 
   return (
-    <html lang="fr" className={`${dmSans.variable} ${dmSerif.variable}`}>
+    <html lang="fr" className={roboto.variable}>
       <body className="antialiased">
         <Navbar />
         <main>{children}</main>

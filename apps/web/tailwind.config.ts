@@ -9,8 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", "sans-serif"],
-        serif: ["var(--font-serif)", "serif"],
+        sans: ["var(--font-roboto)", "sans-serif"],
+        serif: ["var(--font-roboto)", "sans-serif"],
+        display: ["var(--font-roboto)", "sans-serif"],
       },
       colors: {
         gold: {
