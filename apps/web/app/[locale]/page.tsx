@@ -187,19 +187,21 @@ export default async function HomePage() {
       {/* ── TÉMOIGNAGES ── */}
       {avisWithUrl.length > 0 && (
         <section className="relative overflow-hidden py-20 px-4" style={{ backgroundColor: '#F2F4F7' }}>
-          {/* Sphère décorative gauche */}
-          <div className="absolute -left-20 top-1/2 -translate-y-1/2 opacity-30 pointer-events-none hidden lg:block">
-            <SphereDots size={420} />
-          </div>
-          {/* Sphère décorative droite */}
-          <div className="absolute -right-20 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-            <SphereDots size={320} />
-          </div>
+          {/* Contenu témoignages */}
           <div className="relative z-10 mx-auto max-w-7xl">
             <h2 className="text-3xl font-serif font-bold text-center mb-12" style={{ color: '#0D2A4E' }}>
               {t('testimonials')}
             </h2>
             <TestimonialsCarousel avis={avisWithUrl} />
+          </div>
+
+          {/* Zone dédiée sphère — SOUS les cards */}
+          <div className="relative justify-center mt-8 h-[280px] overflow-hidden hidden lg:flex">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 opacity-25 pointer-events-none">
+              <SphereDots size={500} />
+            </div>
+            {/* Fondu haut pour transition douce */}
+            <div className="absolute inset-x-0 top-0 h-24 z-10" style={{ background: 'linear-gradient(to bottom, #F2F4F7, transparent)' }} />
           </div>
         </section>
       )}
