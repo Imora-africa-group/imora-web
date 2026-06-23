@@ -10,6 +10,7 @@ import { TestimonialsCarousel } from '@/components/TestimonialsCarousel'
 import { FaqAccordion } from '@/components/FaqAccordion'
 import { CTASection } from '@/components/CTASection'
 import DotsCloud from '@/components/DotsCloud'
+import { HeroSlogan } from '@/components/HeroSlogan'
 
 export const revalidate = 3600
 
@@ -63,9 +64,7 @@ export default async function HomePage() {
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(13,42,78,0.82) 0%, rgba(13,42,78,0.65) 60%, rgba(13,42,78,0.82) 100%)' }} />
         </div>
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white leading-tight">
-            {settings?.sloganText ?? "L'immobilier sécurisé, sans tracasserie"}
-          </h1>
+          <HeroSlogan text={t('heroSlogan')} />
           <p className="mt-6 text-white/80 text-lg md:text-xl max-w-2xl mx-auto">
             {t('heroDesc')}
           </p>
