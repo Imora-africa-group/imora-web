@@ -10,7 +10,7 @@ import { GalerieSection } from '@/components/GalerieSection'
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel'
 import { FaqAccordion } from '@/components/FaqAccordion'
 import { CTASection } from '@/components/CTASection'
-import SphereDots from '@/components/SphereDots'
+import DotsCloud from '@/components/DotsCloud'
 
 export const revalidate = 3600
 
@@ -195,13 +195,17 @@ export default async function HomePage() {
             <TestimonialsCarousel avis={avisWithUrl} />
           </div>
 
-          {/* Zone dédiée sphère — SOUS les cards */}
-          <div className="relative justify-center mt-8 h-[280px] overflow-hidden hidden lg:flex">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 opacity-25 pointer-events-none">
-              <SphereDots size={500} />
-            </div>
-            {/* Fondu haut pour transition douce */}
-            <div className="absolute inset-x-0 top-0 h-24 z-10" style={{ background: 'linear-gradient(to bottom, #F2F4F7, transparent)' }} />
+          {/* Zone nuage de points — full width */}
+          <div className="relative w-full h-[220px] overflow-hidden hidden lg:block">
+            {/* Fondu haut */}
+            <div className="absolute inset-x-0 top-0 h-16 z-10 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #F2F4F7, transparent)' }} />
+            {/* Fondu bas */}
+            <div className="absolute inset-x-0 bottom-0 h-16 z-10 pointer-events-none" style={{ background: 'linear-gradient(to top, #F2F4F7, transparent)' }} />
+            {/* Fondu gauche */}
+            <div className="absolute inset-y-0 left-0 w-32 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, #F2F4F7, transparent)' }} />
+            {/* Fondu droite */}
+            <div className="absolute inset-y-0 right-0 w-32 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, #F2F4F7, transparent)' }} />
+            <DotsCloud />
           </div>
         </section>
       )}
