@@ -187,25 +187,17 @@ export default async function HomePage() {
       {/* ── TÉMOIGNAGES ── */}
       {avisWithUrl.length > 0 && (
         <section className="relative overflow-hidden py-20 px-4" style={{ backgroundColor: '#F2F4F7' }}>
-          {/* Contenu témoignages */}
+          {/* Nuage de points — DERRIÈRE tout */}
+          <div className="absolute inset-0 pointer-events-none hidden lg:block">
+            <DotsCloud />
+          </div>
+
+          {/* Contenu — AU-DESSUS du nuage */}
           <div className="relative z-10 mx-auto max-w-7xl">
             <h2 className="text-3xl font-serif font-bold text-center mb-12" style={{ color: '#0D2A4E' }}>
               {t('testimonials')}
             </h2>
             <TestimonialsCarousel avis={avisWithUrl} />
-          </div>
-
-          {/* Zone nuage de points — full width */}
-          <div className="relative w-full h-[220px] overflow-hidden hidden lg:block">
-            {/* Fondu haut */}
-            <div className="absolute inset-x-0 top-0 h-16 z-10 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #F2F4F7, transparent)' }} />
-            {/* Fondu bas */}
-            <div className="absolute inset-x-0 bottom-0 h-16 z-10 pointer-events-none" style={{ background: 'linear-gradient(to top, #F2F4F7, transparent)' }} />
-            {/* Fondu gauche */}
-            <div className="absolute inset-y-0 left-0 w-32 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, #F2F4F7, transparent)' }} />
-            {/* Fondu droite */}
-            <div className="absolute inset-y-0 right-0 w-32 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, #F2F4F7, transparent)' }} />
-            <DotsCloud />
           </div>
         </section>
       )}
