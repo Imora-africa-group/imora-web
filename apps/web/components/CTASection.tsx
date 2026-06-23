@@ -1,13 +1,15 @@
-import Link from 'next/link'
 import Image from 'next/image'
+import { Link } from '@/i18n/navigation'
 import { Building2, Key } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 import { buildWhatsAppUrl, WA_MESSAGES } from '@/lib/whatsapp'
 
 interface CTASectionProps {
   phone: string
 }
 
-export function CTASection({ phone }: CTASectionProps) {
+export async function CTASection({ phone }: CTASectionProps) {
+  const t = await getTranslations('cta')
   const waHref = phone ? buildWhatsAppUrl(phone, WA_MESSAGES.general) : '#'
 
   return (
@@ -26,20 +28,20 @@ export function CTASection({ phone }: CTASectionProps) {
               style={{ opacity: 0.1 }}
             />
             <p className="text-xs tracking-widest font-medium mb-3" style={{ color: '#C9A84C' }}>
-              POUR LES INVESTISSEURS
+              {t('investorsLabel')}
             </p>
             <h2 className="text-2xl font-bold text-white mb-3">
-              Vous avez un projet immobilier ?
+              {t('investorsTitle')}
             </h2>
             <p className="text-sm leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.7)' }}>
-              Parcelles, construction ou gestion locative — notre équipe vous accompagne de A à Z.
+              {t('investorsDesc')}
             </p>
             <Link
               href="/simulation"
               className="inline-flex items-center rounded-full px-6 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
               style={{ backgroundColor: '#C9A84C', color: '#0D2A4E' }}
             >
-              Démarrer mon projet →
+              {t('investorsCta')}
             </Link>
           </div>
 
@@ -54,31 +56,31 @@ export function CTASection({ phone }: CTASectionProps) {
               style={{ opacity: 0.1 }}
             />
             <p className="text-xs tracking-widest font-medium mb-3" style={{ color: '#C9A84C' }}>
-              POUR LES PROPRIÉTAIRES
+              {t('ownersLabel')}
             </p>
             <h2 className="text-2xl font-bold text-white mb-3">
-              Vous avez un bien à gérer ?
+              {t('ownersTitle')}
             </h2>
             <p className="text-sm leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.7)' }}>
-              Confiez-nous la gestion locative de votre bien. Loyer garanti chaque mois, zéro tracas.
+              {t('ownersDesc')}
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/contact"
                 className="inline-flex items-center rounded-full px-6 py-2.5 text-sm font-semibold border-2 border-white text-white transition-colors duration-200 hover:bg-white hover:text-[#0D2A4E]"
               >
-                Nous contacter →
+                {t('ownersCta')}
               </Link>
               {phone && (
-                <Link
+                <a
                   href={waHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold border-2 border-white text-white transition-colors duration-200 hover:bg-white hover:text-[#0D2A4E]"
                 >
                   <Image src="/icon/whatsapp-white.png" width={18} height={18} alt="WhatsApp" />
-                  WhatsApp
-                </Link>
+                  {t('whatsapp')}
+                </a>
               )}
             </div>
           </div>

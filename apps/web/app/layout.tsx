@@ -1,10 +1,7 @@
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
+import { getLocale } from 'next-intl/server'
 import './globals.css'
-import { Navbar } from '@/components/Navbar'
-import { Footer } from '@/components/Footer'
-import { WhatsAppButton } from '@/components/WhatsAppButton'
-import { prisma } from '@imora/db'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -24,17 +21,10 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await prisma.settings.findUnique({ where: { id: 'singleton' } })
-  const waNumber = settings?.whatsappNumber ?? ''
-
+  const locale = await getLocale()
   return (
-    <html lang="fr" className={roboto.variable}>
-      <body className="antialiased">
-        <Navbar />
-        <main>{children}</main>
-        <Footer settings={settings} />
-        <WhatsAppButton phone={waNumber} />
-      </body>
+    <html lang={locale} className={roboto.variable}>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }

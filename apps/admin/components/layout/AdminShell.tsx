@@ -1,5 +1,6 @@
 import { auth } from '../../auth'
 import { redirect } from 'next/navigation'
+import { getLocale } from 'next-intl/server'
 import { Sidebar } from './Sidebar'
 import { TopBar } from './TopBar'
 
@@ -9,8 +10,8 @@ interface AdminShellProps {
 }
 
 export async function AdminShell({ children, title }: AdminShellProps) {
-  const session = await auth()
-  if (!session?.user) redirect('/login')
+  const [session, locale] = await Promise.all([auth(), getLocale()])
+  if (!session?.user) redirect(`/${locale}/login`)
 
   const userName = session.user.name ?? 'Admin'
   const userRole = (session.user as { role: string }).role ?? 'EDITEUR'

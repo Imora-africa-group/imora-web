@@ -1,0 +1,42 @@
+{
+  "nav": {
+    "content": "CONTENT",
+    "dashboard": "Dashboard",
+    "parcelles": "Plots",
+    "construction": "Construction",
+    "leads_section": "LEADS",
+    "leads": "All leads",
+    "management": "MANAGEMENT",
+    "locative": "Property Management",
+    "partenaires": "Partners",
+    "avis": "Client Reviews",
+    "realisations": "Projects",
+    "faq": "FAQ",
+    "settings_section": "SETTINGS",
+    "parametres": "Settings",
+    "logout": "Sign out"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "loading": "Loading...",
+    "confirm": "Confirm",
+    "back": "Back",
+    "publish": "Publish",
+    "draft": "Draft",
+    "published": "Published",
+    "actions": "Actions"
+  },
+  "login": {
+    "title": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "loading": "Signing in...",
+    "error": "Invalid email or password."
+  }
+}

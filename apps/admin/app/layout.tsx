@@ -4,6 +4,7 @@ import { Geist } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { SessionProviderWrapper } from '@/components/SessionProviderWrapper'
 import { Toaster } from 'sonner'
+import { getLocale } from 'next-intl/server'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
 
@@ -12,9 +13,10 @@ export const metadata: Metadata = {
   description: 'Dashboard administrateur IMORA AFRICA',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale()
   return (
-    <html lang="fr" className={cn('font-sans', geist.variable)}>
+    <html lang={locale} className={cn('font-sans', geist.variable)}>
       <body>
         <SessionProviderWrapper>
           {children}

@@ -1,0 +1,42 @@
+{
+  "nav": {
+    "content": "CONTENU",
+    "dashboard": "Tableau de bord",
+    "parcelles": "Parcelles",
+    "construction": "Construction",
+    "leads_section": "LEADS",
+    "leads": "Tous les leads",
+    "management": "GESTION",
+    "locative": "Gestion Locative",
+    "partenaires": "Partenaires",
+    "avis": "Avis Clients",
+    "realisations": "Réalisations",
+    "faq": "FAQ",
+    "settings_section": "PARAMÈTRES",
+    "parametres": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "loading": "Chargement...",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "publish": "Publier",
+    "draft": "Brouillon",
+    "published": "Publié",
+    "actions": "Actions"
+  },
+  "login": {
+    "title": "Connexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "loading": "Connexion...",
+    "error": "Email ou mot de passe incorrect."
+  }
+}

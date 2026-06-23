@@ -6,7 +6,7 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth
-      const isLoginPage = nextUrl.pathname === '/login'
+      const isLoginPage = nextUrl.pathname.endsWith('/login')
 
       if (isLoggedIn && isLoginPage) {
         return Response.redirect(new URL('/', nextUrl))

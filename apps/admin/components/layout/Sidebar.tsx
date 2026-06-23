@@ -1,7 +1,6 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { Link, usePathname } from '@/i18n/navigation'
 import { signOut } from 'next-auth/react'
 import {
   LayoutDashboard,
@@ -13,7 +12,6 @@ import {
   Star,
   Trophy,
   HelpCircle,
-  BarChart3,
   Settings,
   LogOut,
 } from 'lucide-react'
@@ -33,7 +31,6 @@ const navItems = [
   { label: 'Réalisations', href: '/realisations', icon: Trophy },
   { label: 'FAQ', href: '/faq', icon: HelpCircle },
   { label: 'PARAMÈTRES', type: 'section' as const },
-  { label: 'Statistiques', href: '/statistiques', icon: BarChart3 },
   { label: 'Paramètres', href: '/parametres', icon: Settings },
 ] as const
 
