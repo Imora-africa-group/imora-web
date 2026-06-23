@@ -36,7 +36,7 @@ export default async function ParcellesPage({ searchParams }: PageProps) {
   const t = await getTranslations('parcelles')
   const params = await searchParams
 
-  const settings = await prisma.settings.findUnique({ where: { id: 'singleton' } })
+  const settings = await prisma.settings.findUnique({ where: { id: 'singleton' } }).catch(() => null)
   const rates = {
     usd: settings?.exchangeRateUSD ?? 0.00165,
     eur: settings?.exchangeRateEUR ?? 0.00152,
@@ -67,11 +67,11 @@ export default async function ParcellesPage({ searchParams }: PageProps) {
       where,
       include: { images: { orderBy: { ordre: 'asc' } } },
       orderBy: { createdAt: 'desc' },
-    }),
+    }).catch(() => []),
     prisma.parcelle.findMany({
       where: { status: 'PUBLISHED' },
       select: { ville: true, arrondissement: true },
-    }),
+    }).catch(() => []),
   ])
 
   const villes = [...new Set(allParcelles.map((p) => p.ville))].sort()
@@ -129,7 +129,7 @@ export default async function ParcellesPage({ searchParams }: PageProps) {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 items-stretch">
               {parcelles.map((p) => {
                 const mainImg = p.images.find((i) => i.isMain) ?? p.images[0]
                 const imgUrl = mainImg ? getOptimizedUrl(mainImg.cloudinaryPublicId, 600, 400) : null
@@ -142,15 +142,18 @@ export default async function ParcellesPage({ searchParams }: PageProps) {
                 return (
                   <div
                     key={p.id}
-                    className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:-translate-y-1 hover:shadow-md transition-all duration-300"
+                    className="flex flex-col h-full bg-white rounded-2xl border border-[#E5E7EB] shadow-sm overflow-hidden hover:-translate-y-1 hover:shadow-md transition-all duration-300"
                   >
                     {/* Image */}
-                    <div className="relative h-48 bg-gray-100 overflow-hidden">
+                    <div className="relative w-full h-[220px] bg-[#F2F4F7] flex-shrink-0 overflow-hidden">
                       {imgUrl ? (
                         <Image src={imgUrl} alt={p.titre} fill className="object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <MapPin size={36} className="text-gray-300" />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                          <div className="w-16 h-16 rounded-full bg-[#E5E7EB] flex items-center justify-center">
+                            <MapPin className="w-7 h-7 text-[#9CA3AF]" />
+                          </div>
+                          <span className="text-xs text-[#9CA3AF]">{t('photoComingSoon')}</span>
                         </div>
                       )}
                       <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-white/90 rounded-full px-2.5 py-1">
@@ -160,7 +163,7 @@ export default async function ParcellesPage({ searchParams }: PageProps) {
                     </div>
 
                     {/* Content */}
-                    <div className="p-4">
+                    <div className="flex flex-col flex-1 p-4">
                       <h3 className="font-semibold text-gray-900 line-clamp-1">{p.titre}</h3>
                       <div className="flex items-center gap-1.5 mt-1.5">
                         <MapPin size={12} className="text-gray-400 shrink-0" />
@@ -203,7 +206,7 @@ export default async function ParcellesPage({ searchParams }: PageProps) {
                         </div>
                       )}
 
-                      <div className="flex gap-2 mt-4">
+                      <div className="flex gap-2 mt-auto pt-4">
                         <Link
                           href={`/parcelles/${p.id}`}
                           className="flex-1 text-center rounded-full py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"

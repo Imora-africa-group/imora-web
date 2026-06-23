@@ -30,10 +30,10 @@ export default async function HomePage() {
 
   const [settings, partenaires, avis, faqs] =
     await Promise.all([
-      prisma.settings.findUnique({ where: { id: 'singleton' } }),
-      prisma.partenaire.findMany({ where: { isActive: true }, orderBy: { ordre: 'asc' } }),
-      prisma.avis.findMany({ where: { isPublished: true }, take: 9, orderBy: { dateAvis: 'desc' } }),
-      prisma.fAQ.findMany({ where: { isPublished: true }, orderBy: { ordre: 'asc' }, take: 6 }),
+      prisma.settings.findUnique({ where: { id: 'singleton' } }).catch(() => null),
+      prisma.partenaire.findMany({ where: { isActive: true }, orderBy: { ordre: 'asc' } }).catch(() => []),
+      prisma.avis.findMany({ where: { isPublished: true }, take: 9, orderBy: { dateAvis: 'desc' } }).catch(() => []),
+      prisma.fAQ.findMany({ where: { isPublished: true }, orderBy: { ordre: 'asc' }, take: 6 }).catch(() => []),
     ])
 
   const services = [

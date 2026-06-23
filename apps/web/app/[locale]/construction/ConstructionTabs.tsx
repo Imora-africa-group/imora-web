@@ -152,13 +152,13 @@ export function ConstructionTabs({
 
           {/* Additional models grid */}
           {additional.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
               {additional.map((m, idx) => (
                 <div
                   key={m.id}
-                  className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:-translate-y-1 hover:shadow-md transition-all duration-300"
+                  className="flex flex-col h-full bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:-translate-y-1 hover:shadow-md transition-all duration-300"
                 >
-                  <div className="relative h-48 overflow-hidden bg-gray-100">
+                  <div className="relative w-full h-[220px] flex-shrink-0 overflow-hidden bg-gray-100">
                     <Image
                       src={m.mainImageUrl ?? DEMO_IMAGES_CONSTRUCTION[(idx + 2) % DEMO_IMAGES_CONSTRUCTION.length]}
                       alt={m.titre}
@@ -175,7 +175,7 @@ export function ConstructionTabs({
                     </div>
                   </div>
 
-                  <div className="p-5">
+                  <div className="flex flex-col flex-1 p-5">
                     <h3 className="font-semibold text-gray-900">{m.titre}</h3>
                     <p className="text-xs text-gray-400 mt-0.5">
                       {m.superficie} m² · {m.nbPieces} pièces · {m.niveaux}
@@ -195,7 +195,7 @@ export function ConstructionTabs({
                     )}
                     <Link
                       href={`/simulation?standing=${m.standing}`}
-                      className="mt-5 flex items-center justify-center gap-2 rounded-full py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                      className="mt-auto pt-5 flex items-center justify-center gap-2 rounded-full py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
                       style={{ backgroundColor: '#C9A84C' }}
                     >
                       <Home size={14} />

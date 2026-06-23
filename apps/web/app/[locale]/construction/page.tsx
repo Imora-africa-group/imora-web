@@ -33,14 +33,14 @@ export default async function ConstructionPage() {
       where: { status: 'PUBLISHED' },
       include: { images: { orderBy: { ordre: 'asc' } } },
       orderBy: { prixFCFA: 'asc' },
-    }),
+    }).catch(() => []),
     prisma.realisation.findMany({
       where: { status: 'PUBLISHED' },
       include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
       orderBy: { annee: 'desc' },
       take: 4,
-    }),
-    prisma.settings.findUnique({ where: { id: 'singleton' } }),
+    }).catch(() => []),
+    prisma.settings.findUnique({ where: { id: 'singleton' } }).catch(() => null),
   ])
 
   const rates = {

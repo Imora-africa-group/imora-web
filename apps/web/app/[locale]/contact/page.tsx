@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const t = await getTranslations('contact')
-  const settings = await prisma.settings.findUnique({ where: { id: 'singleton' } })
+  const settings = await prisma.settings.findUnique({ where: { id: 'singleton' } }).catch(() => null)
   const waUrl = settings?.whatsappNumber
     ? buildWhatsAppUrl(settings.whatsappNumber, WA_MESSAGES.general)
     : '#'

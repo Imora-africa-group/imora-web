@@ -32,8 +32,8 @@ export default async function GestionLocativePage() {
   ]
 
   const [loyers, settings] = await Promise.all([
-    prisma.loyer.findMany({ orderBy: [{ ville: 'asc' }, { standing: 'asc' }, { nbPieces: 'asc' }] }),
-    prisma.settings.findUnique({ where: { id: 'singleton' } }),
+    prisma.loyer.findMany({ orderBy: [{ ville: 'asc' }, { standing: 'asc' }, { nbPieces: 'asc' }] }).catch(() => []),
+    prisma.settings.findUnique({ where: { id: 'singleton' } }).catch(() => null),
   ])
 
   const rates = {

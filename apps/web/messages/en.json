@@ -76,7 +76,8 @@
     "distanceGoudron": "Distance to road",
     "distanceCentre": "Distance to city center",
     "tempsCotonou": "Travel time from Cotonou",
-    "description": "Description"
+    "description": "Description",
+    "photoComingSoon": "Photo coming soon"
   },
   "lead": {
     "title": "I'm interested",

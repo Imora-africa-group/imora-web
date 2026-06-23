@@ -11,7 +11,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
-  const parcelle = await prisma.parcelle.findUnique({ where: { id } })
+  const parcelle = await prisma.parcelle.findUnique({ where: { id } }).catch(() => null)
   if (!parcelle) return { title: 'Parcelle introuvable' }
   return {
     title: parcelle.titre,
@@ -26,8 +26,8 @@ export default async function ParcelleDetailPage({ params }: PageProps) {
     prisma.parcelle.findUnique({
       where: { id, status: 'PUBLISHED' },
       include: { images: { orderBy: { ordre: 'asc' } } },
-    }),
-    prisma.settings.findUnique({ where: { id: 'singleton' } }),
+    }).catch(() => null),
+    prisma.settings.findUnique({ where: { id: 'singleton' } }).catch(() => null),
   ])
 
   if (!parcelle) notFound()

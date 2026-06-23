@@ -19,7 +19,7 @@ export default async function LocaleLayout({
 
   const [messages, settings] = await Promise.all([
     getMessages(),
-    prisma.settings.findUnique({ where: { id: 'singleton' } }),
+    prisma.settings.findUnique({ where: { id: 'singleton' } }).catch(() => null),
   ])
 
   const waNumber = settings?.whatsappNumber ?? ''
