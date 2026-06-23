@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { MapPin, Building2, Key } from 'lucide-react'
 import { prisma, getOptimizedUrl } from '@imora/db'
 import { getTranslations } from 'next-intl/server'
-import { StatsSection } from '@/components/StatsCounter'
 import { OffresSection } from '@/components/OffresSection'
 import { GalerieSection } from '@/components/GalerieSection'
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel'
@@ -28,12 +27,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HomePage() {
   const t = await getTranslations('home')
 
-  const [settings, override, parcelleCount, partenaireCount, partenaires, avis, faqs] =
+  const [settings, partenaires, avis, faqs] =
     await Promise.all([
       prisma.settings.findUnique({ where: { id: 'singleton' } }),
-      prisma.statOverride.findUnique({ where: { id: 'singleton' } }),
-      prisma.parcelle.count({ where: { status: 'PUBLISHED' } }),
-      prisma.partenaire.count({ where: { isActive: true } }),
       prisma.partenaire.findMany({ where: { isActive: true }, orderBy: { ordre: 'asc' } }),
       prisma.avis.findMany({ where: { isPublished: true }, take: 9, orderBy: { dateAvis: 'desc' } }),
       prisma.fAQ.findMany({ where: { isPublished: true }, orderBy: { ordre: 'asc' }, take: 6 }),
@@ -43,13 +39,6 @@ export default async function HomePage() {
     { icon: MapPin, titre: t('service1Title'), description: t('service1Desc'), href: '/parcelles' as const },
     { icon: Building2, titre: t('service2Title'), description: t('service2Desc'), href: '/construction' as const },
     { icon: Key, titre: t('service3Title'), description: t('service3Desc'), href: '/gestion-locative' as const },
-  ]
-
-  const stats = [
-    { value: override?.projetsRealises ?? 0, label: 'Projets réalisés', suffix: '+' },
-    { value: override?.clientsSatisfaits ?? 0, label: 'Clients satisfaits', suffix: '+' },
-    { value: parcelleCount, label: 'Parcelles disponibles' },
-    { value: partenaireCount, label: 'Partenaires actifs' },
   ]
 
   const avisWithUrl = avis.map((a) => ({
@@ -138,12 +127,6 @@ export default async function HomePage() {
 
       {/* ── GALERIE ── */}
       <GalerieSection />
-
-      {/* ── STATS ── */}
-      {((override?.projetsRealises ?? 0) > 0 ||
-        (override?.clientsSatisfaits ?? 0) > 0 ||
-        parcelleCount > 5 ||
-        partenaireCount > 3) && <StatsSection stats={stats} />}
 
       {/* ── PARTENAIRES ── */}
       {partenaires.length > 0 && (
