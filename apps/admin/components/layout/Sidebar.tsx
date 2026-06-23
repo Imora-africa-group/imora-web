@@ -2,6 +2,7 @@
 
 import { Link, usePathname } from '@/i18n/navigation'
 import { signOut } from 'next-auth/react'
+import Image from 'next/image'
 import {
   LayoutDashboard,
   Users,
@@ -62,13 +63,22 @@ export function Sidebar({ userName, userRole }: SidebarProps) {
       style={{ backgroundColor: '#0D2A4E' }}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center px-6 border-b border-white/10">
+      <div className="flex h-16 items-center gap-3 px-5 border-b border-white/10">
+        <div className="relative h-9 w-9 shrink-0">
+          <Image
+            src="/icon/logo-imora.png"
+            alt="IMORA AFRICA"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
         <div>
-          <p className="text-lg font-bold">
+          <p className="text-sm font-bold leading-none">
             <span style={{ color: '#B8860B' }}>IMORA</span>{' '}
             <span className="text-white">AFRICA</span>
           </p>
-          <p className="text-xs text-white/50">Administration</p>
+          <p className="text-xs text-white/50 mt-0.5">Administration</p>
         </div>
       </div>
 
