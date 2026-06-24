@@ -15,7 +15,8 @@ export async function generateMetadata(): Promise<Metadata> {
       title: `${t('metaTitle')} — IMORA AFRICA`,
       description: t('heroDesc'),
     },
-  }
+  }  
+  
 }
 
 const equipe = [
