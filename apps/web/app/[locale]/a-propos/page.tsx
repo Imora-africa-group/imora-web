@@ -39,7 +39,7 @@ export default async function AProposPage() {
     include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
     orderBy: { createdAt: 'desc' },
     take: 4,
-  })
+  }).catch(() => [])
 
   return (
     <>
