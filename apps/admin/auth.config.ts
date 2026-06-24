@@ -3,6 +3,7 @@ import type { NextAuthConfig } from 'next-auth'
 export const authConfig: NextAuthConfig = {
   pages: { signIn: '/login' },
   session: { strategy: 'jwt' },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth
