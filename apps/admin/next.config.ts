@@ -1,15 +1,16 @@
 import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
+import path from 'path'
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 const nextConfig: NextConfig = {
   transpilePackages: ['@imora/ui', '@imora/db', '@imora/types'],
   serverExternalPackages: ['cloudinary', '@prisma/client', 'bcryptjs'],
+  outputFileTracingRoot: path.join(__dirname, '../../'),
   outputFileTracingIncludes: {
     '**': [
-      '../../node_modules/.pnpm/@prisma+client@*/node_modules/.prisma/client/*.node',
-      '../../node_modules/.prisma/client/*.node',
+      'node_modules/.pnpm/@prisma+client@*/node_modules/.prisma/client/*.node',
     ],
   },
   images: {

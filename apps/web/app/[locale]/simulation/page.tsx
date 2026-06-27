@@ -22,16 +22,16 @@ export default async function SimulationPage() {
     prisma.parcelle.findMany({
       where: { status: 'PUBLISHED' },
       select: { ville: true, arrondissement: true, prixFCFA: true },
-    }),
+    }).catch(() => []),
     prisma.modeleConstruction.findMany({
       where: { status: 'PUBLISHED' },
       include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
       orderBy: { prixFCFA: 'asc' },
-    }),
+    }).catch(() => []),
     prisma.loyer.findMany({
       select: { ville: true, standing: true, loyerMinFCFA: true, loyerMaxFCFA: true },
-    }),
-    prisma.settings.findUnique({ where: { id: 'singleton' } }),
+    }).catch(() => []),
+    prisma.settings.findUnique({ where: { id: 'singleton' } }).catch(() => null),
   ])
 
   const rates = {
