@@ -1,12 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getToken } from 'next-auth/jwt'
+import NextAuth from 'next-auth'
+import { authConfig } from './auth.config'
+import { NextResponse } from 'next/server'
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+const { auth } = NextAuth(authConfig)
 
-  // Laisser passer les routes publiques et assets
+export default auth((req) => {
+  const { pathname } = req.nextUrl
+
   if (
-    pathname.includes('/login') ||
     pathname.startsWith('/api/') ||
     pathname.startsWith('/_next/') ||
     pathname === '/favicon.ico' ||
@@ -15,23 +16,23 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Rediriger la racine vers la locale par défaut
   if (pathname === '/') {
-    return NextResponse.redirect(new URL('/fr', request.url))
+    return NextResponse.redirect(new URL('/fr', req.url))
   }
 
-  // Vérifier le token JWT — aucun appel DB, compatible Edge Runtime
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  })
+  const isLoggedIn = !!req.auth
+  const isLoginPage = pathname.includes('/login')
 
-  if (!token) {
-    return NextResponse.redirect(new URL('/fr/login', request.url))
+  if (isLoggedIn && isLoginPage) {
+    return NextResponse.redirect(new URL('/fr', req.url))
+  }
+
+  if (!isLoggedIn && !isLoginPage) {
+    return NextResponse.redirect(new URL('/fr/login', req.url))
   }
 
   return NextResponse.next()
-}
+})
 
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icon.png).*)'],
