@@ -135,7 +135,7 @@ export function Sidebar({ userName, userRole }: SidebarProps) {
           <p className="text-xs text-white/40 truncate">{userRole}</p>
         </div>
         <button
-          onClick={() => signOut({ callbackUrl: '/login' })}
+          onClick={() => signOut({ callbackUrl: '/fr/login' })}
           className="text-white/40 hover:text-white transition-colors"
           title="Déconnexion"
         >
